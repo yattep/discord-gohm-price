@@ -373,7 +373,6 @@ async def on_member_join(member):
     
              await guild.kick(member_check)
 
-
 ###SENTINEL BOT END###
 
 #run
