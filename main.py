@@ -176,6 +176,53 @@ async def get_arbi_bal():
     
     return str(balancerounded)
 
+mcap_bot = commands.Bot(command_prefix="olymcap!")
+LAST_VAL = ''
+### log in
+@mcap_bot.event
+async def on_ready():
+    print(f"Logged in as {mcap_bot.user.name}")
+    print("------")
+    if update_mcap.is_running():
+      print("Task Already Running on_ready")
+    else:
+      await update_mcap.start()  # DYNAMIC
+
+@mcap_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def fixpresence(ctx):
+    for guild in mcap_bot.guilds:
+        await mcap_bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"OHM MCAP"))
+    await ctx.send("Yes ser, on it boss.")
+
+# update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
+@tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
+async def update_mcap():
+    newName = await get_ohm_mcap()
+    print(f"Updating nickname to: {newName}")
+    ## dynamic updates
+    try:
+        for guild in mcap_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await mcap_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM MCAP"))
+    except:
+        print("likely discord rate limit")
+
+async def get_ohm_mcap():
+    global LAST_VAL
+    try:
+      raw_data = requests.post(constants.SUBGRAPH_URL, json = constants.REQUEST_OBJ)
+      json_data = json.loads(raw_data.text)
+      mcap = json_data["data"]["protocolMetrics"][0]["marketCap"]
+      name_val = human_format(float(mcap))
+      LAST_VAL = name_val
+      return name_val
+    except:
+      print("subgraph exception")
+      return LAST_VAL
+
 
 #run
 loop = asyncio.get_event_loop()
@@ -185,6 +232,8 @@ loop.create_task(index_bot.start(os.environ['INDEX_BOT_TOKEN']))
 loop.create_task(arbi_bot.start(os.environ['ARBI_BOT_TOKEN']))
 
 loop.create_task(olyprice_bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
+
+loop.create_task(mcap_bot.start(os.environ['MCAP_BOT_TOKEN']))
 
 try:
   loop.run_forever()
