@@ -388,7 +388,6 @@ loop.create_task(mcap_bot.start(os.environ['MCAP_BOT_TOKEN']))
 
 loop.create_task(sentinel_bot.start(os.environ['SENTINEL_BOT_TOKEN']))
 
-
 try:
   loop.run_forever()
 finally:
