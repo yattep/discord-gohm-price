@@ -5,8 +5,6 @@ from discord.ext import commands
 from discord.ext import tasks
 import json
 from pycoingecko import CoinGeckoAPI
-from datetime import datetime
-from dateutil import parser
 import traceback
 
 cg = CoinGeckoAPI()
