@@ -184,7 +184,7 @@ loop.create_task(index_bot.start(os.environ['INDEX_BOT_TOKEN']))
 
 loop.create_task(arbi_bot.start(os.environ['ARBI_BOT_TOKEN']))
 
-loop.create_task(olyprice_bot.start(os.environ['GOHM_PRICEBOT_TOKEN']))
+loop.create_task(olyprice_bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
 
 try:
   loop.run_forever()
