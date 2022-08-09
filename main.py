@@ -160,13 +160,20 @@ async def forceupdate(ctx):
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
 async def update_arbi():
-    newName = await get_arbi_bal()
-    print(f"Updating Arbi Balance nickname to: {newName}")
-    ## dynamic updates
-    for guild in arbi_bot.guilds:
-        await guild.me.edit(nick=newName)
-        await arbi_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
+    try:
+        newName = await get_arbi_bal()
+        print(f"Updating Arbi Balance nickname to: {newName}")
+        ## dynamic updates
+        for guild in arbi_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await arbi_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
+    except:
+        print(f"Failed to update Arbi Balance nickname")
+        for guild in arbi_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await arbi_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
 
 async def get_arbi_bal():
     gohm_abi = json.loads(constants.GOHM_ABI)
