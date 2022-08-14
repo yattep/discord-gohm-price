@@ -157,6 +157,32 @@ async def forceupdate(ctx):
             type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
     await ctx.send("Happy to report it has been updated!")
 
+@arbi_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def checkloop(ctx):
+    try:
+      if update_arbi.is_running():
+        next_iter = update_arbi.next_iteration
+        next_run = next_iter.strftime(constants.DATE_FORMAT)
+        await ctx.send(f"Loop is Running, next loop attempt at: {next_run}")
+      else:
+        await ctx.send("Loop is not Running")
+    except Exception as e:
+      await ctx.send(f"Exception Raised, check logs: {e}")
+
+@arbi_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def startloop(ctx):
+    try:
+      if update_arbi.is_running():  
+        await ctx.send("Loop Already Running")
+      else:
+        update_arbi.start()
+        await ctx.send("Started Loop")
+    except Exception as e:
+      await ctx.send(f"Exception Raised, check logs: {e}")
+
+
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
 async def update_arbi():
