@@ -1,4 +1,4 @@
-PRICE_UPDATE_INTERVAL = 5 # in minutes
+PRICE_UPDATE_INTERVAL = 10 # in minutes
 GENERIC_UPDATE_INTERVAL = 10
 SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/olympus-protocol-metrics'
 REQUEST_OBJ = {"operationName":"ProtcolMetrics","variables":{},"query":"query ProtcolMetrics {\n  protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {\n    block\n    currentIndex\n    id\n    marketCap\n    __typename\n  }\n}\n"}

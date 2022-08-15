@@ -197,7 +197,6 @@ async def update_arbi():
     except:
         print(f"Failed to update Arbi Balance nickname")
         for guild in arbi_bot.guilds:
-            await guild.me.edit(nick=newName)
             await arbi_bot.change_presence(activity=discord.Activity(
                 type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
 
