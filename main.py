@@ -108,13 +108,18 @@ async def forceupdate(ctx):
 
 @tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
 async def update_index():
-    newName = await get_ohm_index()
-    print(f"Updating index bot nickname to: {newName}")
-    ## dynamic updates
-    for guild in index_bot.guilds:
-        await guild.me.edit(nick=newName)
-        await index_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM Index"))
+    try:
+        newName = await get_ohm_index()
+        print(f"Updating index bot nickname to: {newName}")
+        ## dynamic updates
+        for guild in index_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await index_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM Index"))
+    except:
+        for guild in index_bot.guilds:
+            await index_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM Index"))
 
 async def get_ohm_index():
     raw_data = requests.post(constants.SUBGRAPH_URL, json = constants.REQUEST_OBJ)
