@@ -42,15 +42,19 @@ async def fixpresence(ctx):
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
 async def update_price():
-    newName = await get_gohm_price()
-    print(f"Updating nickname to: {newName}")
-    ## dynamic updates
-    try:
+    try:   
+        newName = await get_gohm_price()
+        print(f"Updating nickname to: {newName}")
+        ## dynamic updates
+    
         for guild in olyprice_bot.guilds:
             await guild.me.edit(nick=newName)
             await olyprice_bot.change_presence(activity=discord.Activity(
                 type=discord.ActivityType.watching, name=f"gOHM price from cg"))
     except:
+        for guild in olyprice_bot.guilds:
+            await olyprice_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"gOHM price from cg"))
         print("likely discord rate limit")
         traceback.print_exc()
 
@@ -244,10 +248,10 @@ async def fixpresence(ctx):
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
 async def update_mcap():
-    newName = await get_ohm_mcap()
-    print(f"Updating nickname to: {newName}")
-    ## dynamic updates
     try:
+        newName = await get_ohm_mcap()
+        print(f"Updating nickname to: {newName}")
+        ## dynamic updates
         for guild in mcap_bot.guilds:
             await guild.me.edit(nick=newName)
             await mcap_bot.change_presence(activity=discord.Activity(
