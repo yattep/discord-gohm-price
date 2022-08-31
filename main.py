@@ -125,7 +125,7 @@ async def update_index():
                 type=discord.ActivityType.watching, name=f"OHM Index"))
 
 async def get_ohm_index():
-    rawindex = await get_raw_index()
+    rawindex = get_raw_index()
     
     name_val = round(float(rawindex),4)
   
@@ -200,8 +200,8 @@ async def update_arbi():
             await guild.me.edit(nick=newName)
             await arbi_bot.change_presence(activity=discord.Activity(
                 type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
-        channel = arbi_bot.get_channel(constants.LOG_CHANNEL)
-        await channel.send(f"Arbitrum gOHM Balance - {newName}")
+        log_channel = arbi_bot.get_channel(constants.LOG_CHANNEL)
+        await log_channel.send(f"Arbitrum gOHM Balance - {newName}")
     except:
         print(f"Failed to update Arbi Balance nickname")
         for guild in arbi_bot.guilds:
