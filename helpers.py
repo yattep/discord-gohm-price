@@ -36,5 +36,4 @@ def get_raw_index():
     query = {"query": constants.INDEX_PRICE_QUERY.format(get_latest_block())}
     raw_data = requests.post(constants.SUBGRAPH_URL, json = query)
     json_data = json.loads(raw_data.text)
-    print(json_data)
     return json_data["data"]["protocolMetrics"][0]["currentIndex"]

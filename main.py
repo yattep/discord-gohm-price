@@ -161,6 +161,8 @@ async def forceupdate(ctx):
         await guild.me.edit(nick=newName)
         await arbi_bot.change_presence(activity=discord.Activity(
             type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
+    log_channel = arbi_bot.get_channel(constants.LOG_CHANNEL)
+    await log_channel.send(f"Arbitrum gOHM Balance - {newName}")
     await ctx.send("Happy to report it has been updated!")
 
 @arbi_bot.command(pass_context=True)
