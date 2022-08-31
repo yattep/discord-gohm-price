@@ -11,7 +11,7 @@ def human_format(num):
     return '${}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'),
                                ['', 'K', 'M', 'B', 'T'][magnitude])
 
-async def get_latest_block():
+def get_latest_block():
     block_raw = requests.post(constants.SUBGRAPH_URL, json = constants.BLOCK_REQUEST_OBJ)
     block_json = json.loads(block_raw.text)
     print(block_json)
