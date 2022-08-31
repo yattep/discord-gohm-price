@@ -1,7 +1,6 @@
 ### imports
 import os
 import time
-from urllib import request
 import discord
 from discord.ext import commands
 from discord.ext import tasks
@@ -9,7 +8,6 @@ import json
 from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
-import requests
 import asyncio
 from helpers import get_circulating_supply, get_ohm_price, get_raw_index, human_format
 from web3.auto.infura import w3
@@ -268,6 +266,7 @@ async def get_ohm_mcap():
       LAST_VAL = name_val
       return name_val
     except:
+      traceback.print_exc()
       print("subgraph exception")
       return LAST_VAL
 ###OHM MCAP BOT END###
