@@ -11,12 +11,6 @@ def human_format(num):
     return '${}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'),
                                ['', 'K', 'M', 'B', 'T'][magnitude])
 
-def get_latest_block():
-    block_raw = requests.post(constants.SUBGRAPH_URL, json = constants.BLOCK_REQUEST_OBJ)
-    block_json = json.loads(block_raw.text)
-    print(block_json)
-    return block_json['data']['tokenRecords'][0]['block']
-
 async def get_ohm_price():
     price_query = {"query": constants.INDEX_REQUEST_OBJ}
     raw_price_data = requests.post(constants.SUBGRAPH_URL, json = price_query)
