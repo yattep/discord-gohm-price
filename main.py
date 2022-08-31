@@ -190,7 +190,7 @@ async def startloop(ctx):
 
 
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
-@tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
+@tasks.loop(minutes=constants.ARBI_UPDATE_INTERVAL)
 async def update_arbi():
     try:
         newName = await get_arbi_bal()
@@ -200,6 +200,8 @@ async def update_arbi():
             await guild.me.edit(nick=newName)
             await arbi_bot.change_presence(activity=discord.Activity(
                 type=discord.ActivityType.watching, name=f"Arbi gOHM Bal"))
+        channel = arbi_bot.get_channel(constants.LOG_CHANNEL)
+        await channel.send(f"Arbitrum gOHM Balance - {newName}")
     except:
         print(f"Failed to update Arbi Balance nickname")
         for guild in arbi_bot.guilds:

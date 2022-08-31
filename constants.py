@@ -1,5 +1,6 @@
 PRICE_UPDATE_INTERVAL = 10 # in minutes
-GENERIC_UPDATE_INTERVAL = 10
+GENERIC_UPDATE_INTERVAL = 10 # in minutes
+ARBI_UPDATE_INTERVAL = 120 # in minutes
 SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/olympus-protocol-metrics'
 BLOCK_REQUEST_QUERY = {"query": "{ tokenRecords(first: 1, orderBy: block, orderDirection: desc) { block }}"}
 TOKEN_SUPPLY_QUERY = "{{tokenSupplies( where: {{block: \"{}\"}}) {{ type supplyBalance }}}}"
