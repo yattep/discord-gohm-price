@@ -1,10 +1,17 @@
-import helpers
+import json
+import requests
+
+def get_latest_block():
+    block_raw = requests.post(SUBGRAPH_URL, json = BLOCK_REQUEST_OBJ)
+    block_json = json.loads(block_raw.text)
+    print(block_json)
+    return block_json['data']['tokenRecords'][0]['block']
 
 PRICE_UPDATE_INTERVAL = 10 # in minutes
 GENERIC_UPDATE_INTERVAL = 10
 SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/olympus-protocol-metrics'
 BLOCK_REQUEST_OBJ = {"query": "{ tokenRecords(first: 1, orderBy: block, orderDirection: desc) { block }}"}
-LATEST_BLOCK = helpers.get_latest_block()
+LATEST_BLOCK = get_latest_block()
 INDEX_REQUEST_OBJ = f"{{protocolMetrics(first: 1, where: {{block: \"{LATEST_BLOCK}\"}}) {{ currentIndex ohmPrice }}}}"
 TSUPPLY_REQUEST_OBJ = f"{{tokenSupplies( where: {{block: \"{LATEST_BLOCK}\"}}) {{ type supplyBalance }}}}"
 ADMIN_ROLE = "Scholars"
