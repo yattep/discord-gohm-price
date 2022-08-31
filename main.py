@@ -242,6 +242,17 @@ async def fixpresence(ctx):
             type=discord.ActivityType.watching, name=f"OHM MCAP"))
     await ctx.send("Yes ser, on it boss.")
 
+@mcap_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def forceupdate(ctx):
+    await ctx.send("Yes ser, on it boss.")
+    newName = await get_ohm_mcap()
+    for guild in mcap_bot.guilds:
+        await guild.me.edit(nick=newName)
+        await mcap_bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"OHM MCAP"))
+    await ctx.send("Happy to report it has been updated!")
+
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
 async def update_mcap():
@@ -259,8 +270,8 @@ async def update_mcap():
 async def get_ohm_mcap():
     global LAST_VAL
     try:
-      price = get_ohm_price()
-      circ_supply = get_circulating_supply()
+      price = await get_ohm_price()
+      circ_supply = await get_circulating_supply()
       mcap = price * circ_supply
       name_val = human_format(float(mcap))
       LAST_VAL = name_val
