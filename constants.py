@@ -1,7 +1,12 @@
+import helpers
+
 PRICE_UPDATE_INTERVAL = 10 # in minutes
 GENERIC_UPDATE_INTERVAL = 10
 SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/olympus-protocol-metrics'
-REQUEST_OBJ = {"operationName":"ProtcolMetrics","variables":{},"query":"query ProtcolMetrics {\n  protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {\n    block\n    currentIndex\n    id\n    marketCap\n    __typename\n  }\n}\n"}
+BLOCK_REQUEST_OBJ = {"query": "{ tokenRecords(first: 1, orderBy: block, orderDirection: desc) { block }}"}
+LATEST_BLOCK = helpers.get_latest_block()
+INDEX_REQUEST_OBJ = f"{{protocolMetrics(first: 1, where: {{block: \"{LATEST_BLOCK}\"}}) {{ currentIndex ohmPrice }}}}"
+TSUPPLY_REQUEST_OBJ = f"{{tokenSupplies( where: {{block: \"{LATEST_BLOCK}\"}}) {{ type supplyBalance }}}}"
 ADMIN_ROLE = "Scholars"
 GRASSHOPPER = "Grasshoppers"
 DATE_FORMAT = '%m/%d %-I:%M%p'

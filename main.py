@@ -1,6 +1,7 @@
 ### imports
 import os
 import time
+from urllib import request
 import discord
 from discord.ext import commands
 from discord.ext import tasks
@@ -10,7 +11,7 @@ import traceback
 import constants
 import requests
 import asyncio
-from helpers import human_format
+from helpers import get_circulating_supply, get_ohm_price, get_raw_index, human_format
 from web3.auto.infura import w3
 from web3 import Web3, HTTPProvider
 
@@ -126,9 +127,7 @@ async def update_index():
                 type=discord.ActivityType.watching, name=f"OHM Index"))
 
 async def get_ohm_index():
-    raw_data = requests.post(constants.SUBGRAPH_URL, json = constants.REQUEST_OBJ)
-    json_data = json.loads(raw_data.text)
-    rawindex = json_data["data"]["protocolMetrics"][0]["currentIndex"]
+    rawindex = get_raw_index()
     
     name_val = round(float(rawindex),4)
   
@@ -262,9 +261,9 @@ async def update_mcap():
 async def get_ohm_mcap():
     global LAST_VAL
     try:
-      raw_data = requests.post(constants.SUBGRAPH_URL, json = constants.REQUEST_OBJ)
-      json_data = json.loads(raw_data.text)
-      mcap = json_data["data"]["protocolMetrics"][0]["marketCap"]
+      price = get_ohm_price()
+      circ_supply = get_circulating_supply()
+      mcap = price * circ_supply
       name_val = human_format(float(mcap))
       LAST_VAL = name_val
       return name_val
@@ -399,7 +398,7 @@ async def on_member_join(member):
         member_check = await guild.fetch_member(member.id)
     except:
         print(f"Couldn't locate member {member.id} | {member.name}")
-    if member_check is not None:
+    if member_check:
         if (len(member_check.roles) == 1 and e_role in member_check.roles):
              print(f"Kicking, {member_check.name} | {member_check.id}")
              print("------")
