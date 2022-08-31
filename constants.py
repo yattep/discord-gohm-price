@@ -1,19 +1,9 @@
-import json
-import requests
-
-def get_latest_block():
-    block_raw = requests.post(SUBGRAPH_URL, json = BLOCK_REQUEST_OBJ)
-    block_json = json.loads(block_raw.text)
-    print(block_json)
-    return block_json['data']['tokenRecords'][0]['block']
-
 PRICE_UPDATE_INTERVAL = 10 # in minutes
 GENERIC_UPDATE_INTERVAL = 10
 SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/olympus-protocol-metrics'
-BLOCK_REQUEST_OBJ = {"query": "{ tokenRecords(first: 1, orderBy: block, orderDirection: desc) { block }}"}
-#LATEST_BLOCK = get_latest_block()
-INDEX_REQUEST_OBJ = f"{{protocolMetrics(first: 1, where: {{block: \"{get_latest_block()}\"}}) {{ currentIndex ohmPrice }}}}"
-TSUPPLY_REQUEST_OBJ = f"{{tokenSupplies( where: {{block: \"{get_latest_block()}\"}}) {{ type supplyBalance }}}}"
+BLOCK_REQUEST_QUERY = {"query": "{ tokenRecords(first: 1, orderBy: block, orderDirection: desc) { block }}"}
+TOKEN_SUPPLY_QUERY = "{{tokenSupplies( where: {{block: \"{}\"}}) {{ type supplyBalance }}}}"
+INDEX_PRICE_QUERY = "{{protocolMetrics(first: 1, where: {{block: \"{}\"}}) {{ currentIndex ohmPrice }}}}"
 ADMIN_ROLE = "Scholars"
 GRASSHOPPER = "Grasshoppers"
 DATE_FORMAT = '%m/%d %-I:%M%p'
