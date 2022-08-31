@@ -125,7 +125,7 @@ async def update_index():
                 type=discord.ActivityType.watching, name=f"OHM Index"))
 
 async def get_ohm_index():
-    rawindex = get_raw_index()
+    rawindex = await get_raw_index()
     
     name_val = round(float(rawindex),4)
   

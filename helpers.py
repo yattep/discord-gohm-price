@@ -22,7 +22,7 @@ async def get_ohm_price():
     raw_price_data = requests.post(constants.SUBGRAPH_URL, json = price_query)
     raw_price_json_data = json.loads(raw_price_data.text)
     print(raw_price_json_data)
-    return float(raw_price_json_data['data']['protocolMetrics'][0]['ohmPrice'])
+    return float(raw_price_json_data["data"]["protocolMetrics"][0]["ohmPrice"])
 
 async def get_circulating_supply():
     supply_query = {"query": constants.TSUPPLY_REQUEST_OBJ}
