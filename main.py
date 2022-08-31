@@ -259,7 +259,7 @@ async def forceupdate(ctx):
 @tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
 async def update_mcap():
     try:
-        newName = get_ohm_mcap()
+        newName = await get_ohm_mcap()
         print(f"Updating nickname to: {newName}")
         ## dynamic updates
         for guild in mcap_bot.guilds:
