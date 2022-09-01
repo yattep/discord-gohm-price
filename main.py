@@ -411,6 +411,7 @@ async def on_member_join(member):
     try:
         member_check = await guild.fetch_member(member.id)
     except:
+        member_check = None
         print(f"Couldn't locate member {member.id} | {member.name}")
     if member_check:
         if (len(member_check.roles) == 1 and e_role in member_check.roles):
