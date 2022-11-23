@@ -41,7 +41,7 @@ async def fixpresence(ctx):
 @tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
 async def update_gohm_price():
     try:   
-        newName = get_gohm_price()
+        newName = await get_gohm_price()
         print(f"Updating nickname to: {newName}")
         ## dynamic updates
     
@@ -104,7 +104,7 @@ async def fixpresence(ctx):
 @tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
 async def update_ohm_price():
     try:   
-        newName = get_ohm_price()
+        newName = await get_ohm_price()
         print(f"Updating nickname to: {newName}")
         ## dynamic updates
     
