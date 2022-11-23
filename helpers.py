@@ -9,8 +9,8 @@ def get_data(url, queryFormat, construct = False):
     else:
         query = queryFormat
     raw = requests.post(url, json = query)
-    json = json.loads(raw.text)
-    return json
+    raw_json = json.loads(raw.text)
+    return raw_json
 
 def human_format(num):
     num = float('{:.3g}'.format(num))
