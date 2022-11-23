@@ -34,7 +34,7 @@ async def on_ready():
 async def fixpresence(ctx):
     for guild in olyprice_bot.guilds:
         await olyprice_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"gOHM price from cg"))
+            type=discord.ActivityType.watching, name=f"gOHM price"))
     await ctx.send("Yes ser, on it boss.")
 
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
@@ -48,11 +48,11 @@ async def update_gohm_price():
         for guild in olyprice_bot.guilds:
             await guild.me.edit(nick=newName)
             await olyprice_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"gOHM price from cg"))
+                type=discord.ActivityType.watching, name=f"gOHM price"))
     except:
         for guild in olyprice_bot.guilds:
             await olyprice_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"gOHM price from cg"))
+                type=discord.ActivityType.watching, name=f"gOHM price"))
         print("likely discord rate limit")
         traceback.print_exc()
 
@@ -127,6 +127,7 @@ async def get_ohm_price():
     #print(json_data)
     usdPrice = get_price_ohm()
     ethPrice = json_data["olympus"]["eth"]
+    print(f"ETH Price (Rounded 3):", ethPrice | round(ethPrice,3))
   
     if LAST_OHM_PRICE != -1 and (abs(((usdPrice - LAST_OHM_PRICE) / usdPrice) * 100) > 10):
         print(f"Caught Price Exception, reverting to last price", {usdPrice} | {LAST_OHM_PRICE})
