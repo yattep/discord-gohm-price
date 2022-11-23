@@ -127,15 +127,14 @@ async def get_ohm_price():
     #print(json_data)
     usdPrice = get_price_ohm()
     ethPrice = json_data["olympus"]["eth"]
-    print(f"ETH Price (Rounded 3):", {ethPrice} | {round(ethPrice,3)})
   
     if LAST_OHM_PRICE != -1 and (abs(((usdPrice - LAST_OHM_PRICE) / usdPrice) * 100) > 10):
         print(f"Caught Price Exception, reverting to last price", {usdPrice} | {LAST_OHM_PRICE})
-        return "{} | Ξ{}".format(human_format(LAST_OHM_PRICE),"%.2f" % round(ethPrice, 3))
+        return "{} | Ξ{}".format(human_format(LAST_OHM_PRICE),"%.3f" % round(ethPrice, 3))
     else:
         #print("else")
         LAST_OHM_PRICE = usdPrice
-        name_val = "{} | Ξ{}".format(human_format(usdPrice),"%.2f" % round(ethPrice, 3))
+        name_val = "{} | Ξ{}".format(human_format(usdPrice),"%.3f" % round(ethPrice, 3))
     
     return name_val
 ###OHM PRICE BOT END###
