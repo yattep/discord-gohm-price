@@ -9,7 +9,7 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
-from helpers import get_circulating_supply, get_ohm_price, get_raw_index, human_format
+from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, human_format
 from web3.auto.infura import w3
 from web3 import Web3, HTTPProvider
 
@@ -18,17 +18,16 @@ olyprice_bot = commands.Bot(command_prefix="olyprice!")
 
 cg = CoinGeckoAPI()
 LAST_PRICE = -1
-LAST_MCAP = -1
 
 ### log in
 @olyprice_bot.event
 async def on_ready():
     print(f"Logged in as {olyprice_bot.user.name}")
     print("------")
-    if update_price.is_running():
+    if update_gohm_price.is_running():
         print("Task Already Running on_ready")
     else:
-      await update_price.start()  # DYNAMIC
+      await update_gohm_price.start()  # DYNAMIC
 
 @olyprice_bot.command(pass_context=True)
 @commands.has_role(constants.ADMIN_ROLE)
@@ -40,9 +39,9 @@ async def fixpresence(ctx):
 
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
-async def update_price():
+async def update_gohm_price():
     try:   
-        newName = await get_gohm_price()
+        newName = get_gohm_price()
         print(f"Updating nickname to: {newName}")
         ## dynamic updates
     
@@ -63,7 +62,7 @@ async def get_gohm_price():
     market_data = json.dumps(raw_data)
     json_data = json.loads(market_data)
     #print(json_data)
-    usdPrice = json_data["governance-ohm"]["usd"]
+    usdPrice = get_price_gohm()
     ethPrice = json_data["governance-ohm"]["eth"]
   
     if LAST_PRICE != -1 and (abs(((usdPrice - LAST_PRICE) / usdPrice) * 100) > 10):
@@ -76,6 +75,69 @@ async def get_gohm_price():
     
     return name_val
 ###GOHM PRICE BOT END###
+
+###OHM PRICE BOT START###
+ohmprice_bot = commands.Bot(command_prefix="ohmprice!")
+
+cg = CoinGeckoAPI()
+LAST_OHM_PRICE = -1
+
+### log in
+@ohmprice_bot.event
+async def on_ready():
+    print(f"Logged in as {ohmprice_bot.user.name}")
+    print("------")
+    if update_ohm_price.is_running():
+        print("Task Already Running on_ready")
+    else:
+      await update_ohm_price.start()  # DYNAMIC
+
+@ohmprice_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def fixpresence(ctx):
+    for guild in ohmprice_bot.guilds:
+        await ohmprice_bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"OHM price"))
+    await ctx.send("Yes ser, on it boss.")
+
+# update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
+@tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
+async def update_ohm_price():
+    try:   
+        newName = get_ohm_price()
+        print(f"Updating nickname to: {newName}")
+        ## dynamic updates
+    
+        for guild in ohmprice_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await ohmprice_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM price"))
+    except:
+        for guild in ohmprice_bot.guilds:
+            await ohmprice_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM price"))
+        print("likely discord rate limit")
+        traceback.print_exc()
+
+async def get_ohm_price():
+    global LAST_OHM_PRICE
+    raw_data = cg.get_price(ids='olympus', vs_currencies='usd, eth')
+    market_data = json.dumps(raw_data)
+    json_data = json.loads(market_data)
+    #print(json_data)
+    usdPrice = get_price_ohm()
+    ethPrice = json_data["olympus"]["eth"]
+  
+    if LAST_OHM_PRICE != -1 and (abs(((usdPrice - LAST_OHM_PRICE) / usdPrice) * 100) > 10):
+        print(f"Caught Price Exception, reverting to last price", {usdPrice} | {LAST_OHM_PRICE})
+        return "{} | Ξ{}".format(human_format(LAST_OHM_PRICE),"%.2f" % round(ethPrice, 2))
+    else:
+        #print("else")
+        LAST_OHM_PRICE = usdPrice
+        name_val = "{} | Ξ{}".format(human_format(usdPrice),"%.2f" % round(ethPrice, 2))
+    
+    return name_val
+###OHM PRICE BOT END###
 
 ###OHM INDEX BOT START###
 index_bot = commands.Bot(command_prefix="olyindex!")
@@ -274,7 +336,7 @@ async def update_mcap():
 async def get_ohm_mcap():
     global LAST_VAL
     try:
-      price = get_ohm_price()
+      price = get_price_ohm()
       circ_supply = get_circulating_supply()
       mcap = price * circ_supply
       name_val = human_format(float(mcap))
@@ -438,6 +500,8 @@ loop.create_task(index_bot.start(os.environ['INDEX_BOT_TOKEN']))
 loop.create_task(arbi_bot.start(os.environ['ARBI_BOT_TOKEN']))
 
 loop.create_task(olyprice_bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
+
+loop.create_task(ohmprice_bot.start(os.environ['OHM_BOT_TOKEN']))
 
 loop.create_task(mcap_bot.start(os.environ['MCAP_BOT_TOKEN']))
 
