@@ -26,6 +26,20 @@ def get_latest_block():
     
     return data['data']['tokenRecords'][0]['block']
 
+def get_latest_arbi_block():
+    data = get_data(constants.ARBI_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+
+    return data['data']['tokenRecords'][0]['block']
+
+def get_latest_ftm_block():
+    data = get_data(constants.FTM_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+
+    return data['data']['tokenRecords'][0]['block']
+
+def get_latest_poly_block():
+    data = get_data(constants.POLY_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+
+    return data['data']['tokenRecords'][0]['block']
 
 def get_price_ohm():
     data = get_data(constants.SUBGRAPH_URL, constants.INDEX_PRICE_QUERY, True)
@@ -44,7 +58,147 @@ def get_circulating_supply():
     
     return sum(float(tkn['supplyBalance']) for tkn in non_liq_tkns)
 
+def get_floating_supply():
+    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_SUPPLY_QUERY, True)
+    tokens = data['data']['tokenSupplies']
+    tokens = list(filter(lambda x: x['type'] != "OHM Bonds (Vesting Tokens)", tokens))
+    
+    return sum(float(tkn['supplyBalance']) for tkn in tokens)
+
 def get_raw_index():
     data = get_data(constants.SUBGRAPH_URL, constants.INDEX_PRICE_QUERY, True)
     
     return data["data"]["protocolMetrics"][0]["currentIndex"]
+
+def get_lb_total_eth():
+    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_RECORD_QUERY, True)
+
+    tokens = data['data']['tokenRecords']
+    liq_tkns = list(filter(lambda x: x['isLiquid'] == True, tokens))
+    return sum(float(t['valueExcludingOhm']) for t in liq_tkns)
+
+def get_lb_total_arbi():
+    data = get_data(constants.ARBI_SUBGRAPH_URL,constants.TOKEN_RECORD_QUERY, True)
+
+    tokens = data['data']['tokenRecords']
+    liq_tkns = list(filter(lambda x: x['isLiquid'] == True, tokens))
+    return sum(float(t['valueExcludingOhm']) for t in liq_tkns)
+
+def get_lb_total_poly():
+    data = get_data(constants.POLY_SUBGRAPH_URL,constants.TOKEN_RECORD_QUERY, True)
+
+    tokens = data['data']['tokenRecords']
+    liq_tkns = list(filter(lambda x: x['isLiquid'] == True, tokens))
+    return sum(float(t['valueExcludingOhm']) for t in liq_tkns)
+
+def get_lb_total_ftm():
+    data = get_data(constants.FTM_SUBGRAPH_URL,constants.TOKEN_RECORD_QUERY, True)
+
+    tokens = data['data']['tokenRecords']
+    liq_tkns = list(filter(lambda x: x['isLiquid'] == True, tokens))
+    return sum(float(t['valueExcludingOhm']) for t in liq_tkns)
+
+def get_combined_lb_total():
+    return get_lb_total_eth() + get_lb_total_arbi() + get_lb_total_poly() + get_lb_total_ftm()
+
+def get_7d_floating_supply():
+    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_SUPPLY_7D_QUERY,True)
+  # create a dictionary to store the sum of supplyBalance values for each date
+    aggregated_data = {}
+    
+    # loop through the tokenSupplies array
+    for token_supply in data['data']['tokenSupplies']:
+        # check if the type is not "OHM Bonds (Vesting Tokens)"
+        if token_supply['type'] != "OHM Bonds (Vesting Tokens)":
+            # convert the supplyBalance string to a float
+            supply_balance = float(token_supply['supplyBalance'])
+            date = token_supply['date']
+            # add the supplyBalance value to the aggregated data for the date
+            aggregated_data[date] = aggregated_data.get(date, 0) + supply_balance
+  # sort by date and trim array to just last 7 days
+    supplies_sorted_dates = sorted(aggregated_data.keys(), reverse=True)
+    supplies_last_7_dates = supplies_sorted_dates[:7]
+    supplies_last_7_days = {date: aggregated_data[date] for date in supplies_last_7_dates}
+
+  # return the sum of supplyBalance values for each date
+    return supplies_last_7_days
+
+def aggregate_tkn_vals(data):
+    aggregated_data = {}
+    
+    # loop through the tokenSupplies array
+    for token_record in data['data']['tokenRecords']:
+        # check if the liquid"
+        if token_record['isLiquid'] == True:
+            # convert the value string to a float
+            token_value = float(token_record['valueExcludingOhm'])
+            date = token_record['date']
+            # add the token (excluding OHM) value to the aggregated data for the date
+            aggregated_data[date] = aggregated_data.get(date, 0) + token_value
+
+  # sort by date and just return the last 7 days
+    values_sorted_dates = sorted(aggregated_data.keys(), reverse=True)
+    values_last_7_dates = values_sorted_dates[:7]
+    last_7_day_values = {date: aggregated_data[date] for date in values_last_7_dates}
+
+  # return the sum of supplyBalance values for each date
+    return last_7_day_values
+
+def get_7d_eth_token_values():
+    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+
+  # return the sum of supplyBalance values for each date
+    return aggregate_tkn_vals(data)
+
+def get_7d_arbi_token_values():
+    data = get_data(constants.ARBI_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+
+  # return the sum of supplyBalance values for each date
+    return aggregate_tkn_vals(data)
+
+
+def get_7d_poly_token_values():
+    data = get_data(constants.POLY_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+
+  # return the sum of supplyBalance values for each date
+    return aggregate_tkn_vals(data)
+
+
+def get_7d_ftm_token_values():
+    data = get_data(constants.FTM_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+
+  # return the sum of supplyBalance values for each date
+    return aggregate_tkn_vals(data)
+
+def get_7d_agg_token_values():
+    result1 = get_7d_eth_token_values()
+    result2 = get_7d_arbi_token_values()
+    result3 = get_7d_poly_token_values()
+    result4 = get_7d_ftm_token_values()
+    # create a dictionary to store the sum of supplyBalance values for each date
+    aggregated_result = {}
+    for res in [result1, result2, result3, result4]:
+        for date, value in res.items():
+            if date in aggregated_result:
+                aggregated_result[date] += value
+            else:
+                aggregated_result[date] = value
+            
+    return aggregated_result
+
+def get_7d_lb_sma():
+  # Get the necessary values to determine Liquid Backing per Floating OHM
+    agg_values = get_7d_agg_token_values()
+    agg_supplies = get_7d_floating_supply()
+
+  # Divide Treasury Liquid Backing by Floating OHM Supply, per day 
+    result = {}
+    for currdate, value1 in agg_values.items():
+        value2 = agg_supplies[currdate]
+        result[currdate] = value1 / value2
+
+  # Get the 7 day SMA
+    sum_of_values = sum(result.values())
+    average = sum_of_values / len(result)
+
+    return average
