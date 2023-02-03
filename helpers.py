@@ -13,13 +13,16 @@ def get_data(url, queryFormat, construct = False):
     return raw_json
 
 def human_format(num):
-    num = float('{:.3g}'.format(num))
     magnitude = 0
     while abs(num) >= 1000:
         magnitude += 1
         num /= 1000.0
-    return '${}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'),
-                               ['', 'K', 'M', 'B', 'T'][magnitude])
+    if magnitude == 0:
+        return '${:.2f}'.format(num)
+    elif num.is_integer():
+        return '${:.0f}{}'.format(num, ['', 'K', 'M', 'B', 'T'][magnitude])
+    else:
+        return '${:.1f}{}'.format(num, ['', 'K', 'M', 'B', 'T'][magnitude])
 
 def get_latest_block():
     data = get_data(constants.SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
