@@ -102,7 +102,7 @@ def get_combined_lb_total():
     return get_lb_total_eth() + get_lb_total_arbi() + get_lb_total_poly() + get_lb_total_ftm()
 
 def get_7d_floating_supply():
-    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_SUPPLY_7D_QUERY,True)
+    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_SUPPLY_7D_QUERY)
   # create a dictionary to store the sum of supplyBalance values for each date
     aggregated_data = {}
     
@@ -145,27 +145,27 @@ def aggregate_tkn_vals(data):
     return last_7_day_values
 
 def get_7d_eth_token_values():
-    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+    data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
 
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 def get_7d_arbi_token_values():
-    data = get_data(constants.ARBI_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+    data = get_data(constants.ARBI_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
 
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 
 def get_7d_poly_token_values():
-    data = get_data(constants.POLY_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+    data = get_data(constants.POLY_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
 
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 
 def get_7d_ftm_token_values():
-    data = get_data(constants.FTM_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY,True)
+    data = get_data(constants.FTM_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
 
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
