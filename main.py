@@ -9,7 +9,7 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
-from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, human_format
+from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma ,human_format
 
 ###GOHM PRICE BOT START###
 olyprice_bot = commands.Bot(command_prefix="olyprice!")
@@ -192,6 +192,58 @@ async def get_ohm_index():
     return str(name_val)
 ###OHM INDEX BOT END###
 
+###OHM LB SMA BOT START###
+lb_sma_bot = commands.Bot(command_prefix="olylb!")
+
+### OHM LB SMA bot log in
+@lb_sma_bot.event
+async def on_ready():
+    print(f"Logged in as {lb_sma_bot.user.name}")
+    print("------")
+    if update_lb.is_running():
+      print("Task Already Running on_ready")
+    else:
+      await update_lb.start()  # DYNAMIC
+
+@lb_sma_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def fixpresence(ctx):
+    for guild in lb_sma_bot.guilds:
+        await lb_sma_bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+    await ctx.send("Yes ser, on it boss.")
+
+@lb_sma_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def forceupdate(ctx):
+    await ctx.send("Yes ser, on it boss.")
+    newName = await get_ohm_lb()
+    for guild in lb_sma_bot.guilds:
+        await guild.me.edit(nick=newName)
+        await lb_sma_bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+    await ctx.send("Happy to report it has been updated!")
+
+@tasks.loop(minutes=constants.LB_UPDATE_INTERVAL)
+async def update_lb():
+    try:
+        newName = await get_ohm_lb()
+        print(f"Updating lb sma bot nickname to: {newName}")
+        ## dynamic updates
+        for guild in lb_sma_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await lb_sma_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+    except:
+        for guild in lb_sma_bot.guilds:
+            await lb_sma_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+
+async def get_ohm_lb():
+    lb_val = get_7d_lb_sma()
+  
+    return human_format(lb_val)
+###OHM LB SMA BOT END###
 
 ###OHM MCAP BOT START###
 mcap_bot = commands.Bot(command_prefix="olymcap!")
@@ -410,6 +462,8 @@ loop.create_task(ohmprice_bot.start(os.environ['OHM_BOT_TOKEN']))
 loop.create_task(mcap_bot.start(os.environ['MCAP_BOT_TOKEN']))
 
 loop.create_task(sentinel_bot.start(os.environ['SENTINEL_BOT_TOKEN']))
+
+loop.create_task(lb_sma_bot.start(os.environ['LB_SMA_BOT_TOKEN']))
 
 try:
   loop.run_forever()
