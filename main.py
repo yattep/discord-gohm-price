@@ -208,33 +208,45 @@ async def on_ready():
 @lb_sma_bot.command(pass_context=True)
 @commands.has_role(constants.ADMIN_ROLE)
 async def fixpresence(ctx):
-    for guild in lb_sma_bot.guilds:
-        await lb_sma_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
-    await ctx.send("Yes ser, on it boss.")
+    try:
+        for guild in lb_sma_bot.guilds:
+            await lb_sma_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+        await ctx.send("Yes ser, on it boss.")
+    except:
+        traceback.print_exc()
 
 @lb_sma_bot.command(pass_context=True)
 @commands.has_role(constants.ADMIN_ROLE)
 async def forceupdate(ctx):
-    await ctx.send("Yes ser, on it boss.")
-    newName = await get_ohm_lb()
-    for guild in lb_sma_bot.guilds:
-        await guild.me.edit(nick=newName)
-        await lb_sma_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
-    await ctx.send("Happy to report it has been updated!")
+    try:
+        await ctx.send("Yes ser, on it boss.")
+        newName = await get_ohm_lb()
+        for guild in lb_sma_bot.guilds:
+            await guild.me.edit(nick=newName)
+            await lb_sma_bot.change_presence(activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+        await ctx.send("Happy to report it has been updated!")
+    except:
+        traceback.print_exc()
 
 @lb_sma_bot.command(pass_context=True)
 async def getrawfloating(ctx):
-    await ctx.send("Yes ser, on it boss.")
-    data = get_7d_floating_supply()
-    await ctx.send(f"Here you go! {data}")
+    try:
+        await ctx.send("Yes ser, on it boss.")
+        data = get_7d_floating_supply()
+        await ctx.send(f"Here you go! {data}")
+    except:
+        traceback.print_exc()
 
 @lb_sma_bot.command(pass_context=True)
 async def getrawtokens(ctx):
-    await ctx.send("Yes ser, on it boss.")
-    data = get_7d_agg_token_values()
-    await ctx.send(f"Here you go! {data}")
+    try:
+        await ctx.send("Yes ser, on it boss.")
+        data = get_7d_agg_token_values()
+        await ctx.send(f"Here you go! {data}")
+    except:
+        traceback.print_exc()
 
 @tasks.loop(minutes=constants.LB_UPDATE_INTERVAL)
 async def update_lb():
@@ -247,14 +259,18 @@ async def update_lb():
             await lb_sma_bot.change_presence(activity=discord.Activity(
                 type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
     except:
+        traceback.print_exc()
         for guild in lb_sma_bot.guilds:
             await lb_sma_bot.change_presence(activity=discord.Activity(
                 type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
 
 async def get_ohm_lb():
-    lb_val = get_7d_lb_sma()
-  
-    return human_format(lb_val)
+    try:
+        lb_val = get_7d_lb_sma()
+    
+        return human_format(lb_val)
+    except:
+        traceback.print_exc()
 ###OHM LB SMA BOT END###
 
 ###OHM MCAP BOT START###
