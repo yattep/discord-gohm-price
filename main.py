@@ -193,7 +193,7 @@ async def get_ohm_index():
 ###OHM INDEX BOT END###
 
 ###OHM LB SMA BOT START###
-lb_sma_bot = commands.Bot(command_prefix="olylb!")
+lb_sma_bot = commands.Bot(command_prefix="ohmliq!")
 
 ### OHM LB SMA bot log in
 @lb_sma_bot.event
