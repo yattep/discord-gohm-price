@@ -235,7 +235,10 @@ async def getrawfloating(ctx):
     try:
         await ctx.send("Yes ser, on it boss.")
         data = get_7d_floating_supply()
-        await ctx.send(f"Here you go! {data}")
+        embed = discord.Embed(title="7 Day Floating Supply", color=discord.Color.blue())
+        for k, v in data.items():
+            embed.add_field(name=k, value="{:,}".format(v), inline=False)
+        await ctx.send(embed=embed)
     except:
         traceback.print_exc()
 
@@ -244,7 +247,10 @@ async def getrawtokens(ctx):
     try:
         await ctx.send("Yes ser, on it boss.")
         data = get_7d_agg_token_values()
-        await ctx.send(f"Here you go! {data}")
+        embed = discord.Embed(title="7 Day Token Values", color=discord.Color.blue())
+        for k, v in data.items():
+            embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
+        await ctx.send(embed=embed)
     except:
         traceback.print_exc()
 
