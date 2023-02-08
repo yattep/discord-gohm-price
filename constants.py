@@ -1,3 +1,8 @@
+from datetime import datetime, timedelta
+
+today = datetime.now().date()
+date_7d_ago = (today - timedelta(days=7)).strftime('%Y-%m-%d')
+
 PRICE_UPDATE_INTERVAL = 10 # in minutes
 GENERIC_UPDATE_INTERVAL = 10 # in minutes
 LB_UPDATE_INTERVAL = 720 # in minutes
@@ -7,9 +12,9 @@ POLY_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/protocol
 FTM_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/protocol-metrics-fantom'
 BLOCK_REQUEST_QUERY = {"query": "{ tokenRecords(first: 1, orderBy: block, orderDirection: desc) { block }}"}
 TOKEN_SUPPLY_QUERY = "{{tokenSupplies( where: {{block: \"{}\"}}) {{ type supplyBalance }}}}"
-TOKEN_SUPPLY_7D_QUERY = {"query": "{tokenSupplies( orderBy: block, orderDirection: desc, first: 300) { type date supplyBalance tokenAddress source sourceAddress pool poolAddress }}"}
+TOKEN_SUPPLY_7D_QUERY = {"query": f"{{tokenSupplies( where: {{date_gte: \"{date_7d_ago}\"}}, orderBy: block, orderDirection: desc, first: 1000) {{ type date supplyBalance tokenAddress source sourceAddress pool poolAddress }}}}"}
 TOKEN_RECORD_QUERY = "{{tokenRecords( where: {{block: \"{}\"}}) {{ value valueExcludingOhm tokenAddress token isLiquid category multiplier }}}}"
-TOKEN_RECORD_7D_QUERY = {"query": "{tokenRecords( orderBy: block, orderDirection: desc, first: 1000 ) { valueExcludingOhm token isLiquid date }}"}
+TOKEN_RECORD_7D_QUERY = {"query": f"{{tokenRecords( where: {{date_gte: \"{date_7d_ago}\"}}, orderBy: block, orderDirection: desc, first: 1000 ) {{ valueExcludingOhm token isLiquid date }}}}"}
 INDEX_PRICE_QUERY = "{{protocolMetrics(first: 1, where: {{block: \"{}\"}}) {{ currentIndex ohmPrice gOhmPrice }}}}"
 ADMIN_ROLE = "Scholars"
 GRASSHOPPER = "Grasshoppers"

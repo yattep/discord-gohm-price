@@ -118,13 +118,9 @@ def get_7d_floating_supply():
             date = token_supply['date']
             # add the supplyBalance value to the aggregated data for the date
             aggregated_data[date] = aggregated_data.get(date, 0) + supply_balance
-  # sort by date and trim array to just last 7 days
-    supplies_sorted_dates = sorted(aggregated_data.keys(), reverse=True)
-    supplies_last_7_dates = supplies_sorted_dates[:7]
-    supplies_last_7_days = {date: aggregated_data[date] for date in supplies_last_7_dates}
 
   # return the sum of supplyBalance values for each date
-    return supplies_last_7_days
+    return aggregated_data
 
 def aggregate_tkn_vals(data):
     aggregated_data = {}
@@ -139,13 +135,8 @@ def aggregate_tkn_vals(data):
             # add the token (excluding OHM) value to the aggregated data for the date
             aggregated_data[date] = aggregated_data.get(date, 0) + token_value
 
-  # sort by date and just return the last 7 days
-    values_sorted_dates = sorted(aggregated_data.keys(), reverse=True)
-    values_last_7_dates = values_sorted_dates[:7]
-    last_7_day_values = {date: aggregated_data[date] for date in values_last_7_dates}
-
   # return the sum of supplyBalance values for each date
-    return last_7_day_values
+    return aggregated_data
 
 def get_7d_eth_token_values():
     data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)

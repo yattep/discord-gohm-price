@@ -9,7 +9,7 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
-from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma ,human_format
+from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, human_format
 
 ###GOHM PRICE BOT START###
 olyprice_bot = commands.Bot(command_prefix="olyprice!")
@@ -223,6 +223,18 @@ async def forceupdate(ctx):
         await lb_sma_bot.change_presence(activity=discord.Activity(
             type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
     await ctx.send("Happy to report it has been updated!")
+
+@lb_sma_bot.command(pass_context=True)
+async def getrawfloating(ctx):
+    await ctx.send("Yes ser, on it boss.")
+    data = get_7d_floating_supply()
+    await ctx.send(f"Here you go! {data}")
+
+@lb_sma_bot.command(pass_context=True)
+async def getrawtokens(ctx):
+    await ctx.send("Yes ser, on it boss.")
+    data = get_7d_agg_token_values()
+    await ctx.send(f"Here you go! {data}")
 
 @tasks.loop(minutes=constants.LB_UPDATE_INTERVAL)
 async def update_lb():
