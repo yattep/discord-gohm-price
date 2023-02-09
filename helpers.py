@@ -188,8 +188,12 @@ def get_7d_lb_sma():
   # Divide Treasury Liquid Backing by Floating OHM Supply, per day 
     result = {}
     for currdate, value1 in agg_values.items():
-        value2 = agg_supplies[currdate]
-        result[currdate] = value1 / value2
+        try:
+            value2 = agg_supplies[currdate]
+            result[currdate] = value1 / value2
+        except KeyError:
+            # Skip this iteration if the date is not present in the second array
+            continue
 
   # Get the 7 day SMA
     sum_of_values = sum(result.values())
