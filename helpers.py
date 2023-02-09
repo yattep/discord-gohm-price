@@ -200,3 +200,20 @@ def get_7d_lb_sma():
     average = sum_of_values / len(result)
 
     return average
+
+def get_7d_lb_sma_raw():
+  # Get the necessary values to determine Liquid Backing per Floating OHM
+    agg_values = get_7d_agg_token_values()
+    agg_supplies = get_7d_floating_supply()
+
+  # Divide Treasury Liquid Backing by Floating OHM Supply, per day 
+    result = {}
+    for currdate, value1 in agg_values.items():
+        try:
+            value2 = agg_supplies[currdate]
+            result[currdate] = value1 / value2
+        except KeyError:
+            # Skip this iteration if the date is not present in the second array
+            continue
+
+    return result

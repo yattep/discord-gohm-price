@@ -9,7 +9,7 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
-from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, human_format
+from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, human_format
 
 ###GOHM PRICE BOT START###
 olyprice_bot = commands.Bot(command_prefix="olyprice!")
@@ -248,6 +248,18 @@ async def getrawtokens(ctx):
         await ctx.send("Yes ser, on it boss.")
         data = get_7d_agg_token_values()
         embed = discord.Embed(title="7 Day Token Values", color=discord.Color.blue())
+        for k, v in data.items():
+            embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
+        await ctx.send(embed=embed)
+    except:
+        traceback.print_exc()
+
+@lb_sma_bot.command(pass_context=True)
+async def getrunninglb(ctx):
+    try:
+        await ctx.send("Yes ser, on it boss.")
+        data = get_7d_lb_sma_raw()
+        embed = discord.Embed(title="7 Day Liquid Backing", color=discord.Color.blue())
         for k, v in data.items():
             embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
         await ctx.send(embed=embed)
