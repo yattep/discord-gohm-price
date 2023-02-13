@@ -1,6 +1,7 @@
 import requests
 import constants
 import json
+import statistics
 ## HELPERS
 
 def get_data(url, queryFormat, construct = False):
@@ -122,6 +123,16 @@ def get_7d_floating_supply():
   # return the sum of supplyBalance values for each date
     return aggregated_data
 
+def check_outlier(data):
+    mean = statistics.mean(data.values())
+    stdev = statistics.stdev(data.values())
+    
+    for date, value in list(data.items()):
+        if abs(value - mean) > stdev:
+            del data[date]
+    
+    return data
+
 def aggregate_tkn_vals(data):
     aggregated_data = {}
     
@@ -194,7 +205,7 @@ def get_7d_lb_sma():
         except KeyError:
             # Skip this iteration if the date is not present in the second array
             continue
-
+    result = check_outlier(result)
   # Get the 7 day SMA
     sum_of_values = sum(result.values())
     average = sum_of_values / len(result)
