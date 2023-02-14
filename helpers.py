@@ -133,11 +133,28 @@ def check_outlier(data):
     
     return data
 
+def get_records_with_highest_block(data):
+    token_records = data['data']['tokenRecords']
+    
+    records_by_date = {}
+    for record in token_records:
+        date = record['date']
+        if date not in records_by_date:
+            records_by_date[date] = []
+        records_by_date[date].append(record)
+
+    records_with_highest_block = []
+    for date, records in records_by_date.items():
+        highest_block = max([int(record['block']) for record in records])
+        records_with_highest_block.extend([record for record in records if int(record['block']) == highest_block])
+
+    return records_with_highest_block
+
 def aggregate_tkn_vals(data):
     aggregated_data = {}
     
-    # loop through the tokenSupplies array
-    for token_record in data['data']['tokenRecords']:
+    # loop through the tokenRecords (pre-cleansed) array
+    for token_record in data:
         # check if the liquid"
         if token_record['isLiquid'] == True:
             # convert the value string to a float
@@ -151,27 +168,31 @@ def aggregate_tkn_vals(data):
 
 def get_7d_eth_token_values():
     data = get_data(constants.SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
-
+  # cleanse to remove extra blocks per day
+    data = get_records_with_highest_block(data)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 def get_7d_arbi_token_values():
     data = get_data(constants.ARBI_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
-
+  # cleanse to remove extra blocks per day
+    data = get_records_with_highest_block(data)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 
 def get_7d_poly_token_values():
     data = get_data(constants.POLY_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
-
+  # cleanse to remove extra blocks per day
+    data = get_records_with_highest_block(data)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 
 def get_7d_ftm_token_values():
     data = get_data(constants.FTM_SUBGRAPH_URL,constants.TOKEN_RECORD_7D_QUERY)
-
+  # cleanse to remove extra blocks per day
+    data = get_records_with_highest_block(data)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
