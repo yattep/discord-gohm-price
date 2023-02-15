@@ -9,6 +9,7 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
+from datetime import datetime, timedelta
 from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, human_format
 
 ###GOHM PRICE BOT START###
@@ -56,12 +57,13 @@ async def update_gohm_price():
 
 async def get_gohm_price():
     global LAST_PRICE
+
     raw_data = cg.get_price(ids='governance-ohm', vs_currencies='usd, eth')
     market_data = json.dumps(raw_data)
     json_data = json.loads(market_data)
-    #print(json_data)
-    usdPrice = get_price_gohm()
-    ethPrice = json_data["governance-ohm"]["eth"]
+    
+    usdPrice = get_price_gohm() #fetches from latest subgraph block
+    ethPrice = json_data["governance-ohm"]["eth"] #fetches from CG, not available in subgraph
   
     if LAST_PRICE != -1 and (abs(((usdPrice - LAST_PRICE) / usdPrice) * 100) > 10):
         print(f"Caught Price Exception, reverting to last price", {usdPrice} | {LAST_PRICE})
@@ -243,6 +245,15 @@ async def getrawfloating(ctx):
         traceback.print_exc()
 
 @lb_sma_bot.command(pass_context=True)
+async def ping(ctx):
+    today = datetime.utcnow().date()
+    date_7d_ago = (today - timedelta(days=7)).strftime('%Y-%m-%d')
+    embed = discord.Embed(title="Pong", color=discord.Color.blue())
+    embed.add_field(name="Today(UTC)", value=today, inline=False)
+    embed.add_field(name="7D Ago(UTC)", value=date_7d_ago, inline=False)
+    await ctx.send(embed=embed)
+
+@lb_sma_bot.command(pass_context=True)
 async def getrawtokens(ctx):
     try:
         await ctx.send("Yes ser, on it boss.")
@@ -353,7 +364,7 @@ async def get_ohm_mcap():
 ###OHM MCAP BOT END###
 
 ###SENTINEL BOT START###
-### intents (double check dev portal)
+### intents
 intents = discord.Intents.default()  # allows the use of custom intents
 intents.members = True  # allows to pull member roles among other things
 intents.presences = True
