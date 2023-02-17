@@ -517,17 +517,25 @@ streak_count = 0
 streak_users = set()
 
 # Define a function to add the appropriate number of reaction emojis
-async def add_reactions(message):
-    global streak_count
-    if streak_count == streak_threshold:
-        await message.add_reaction(u"\u2705")  # Green checkmark emoji
-    elif streak_count <= 9:
-        await message.add_reaction(str(streak_count) + u"\u20e3")
+async def add_reactions(message, count=None):
+    if count is None:
+        if streak_count == streak_threshold:
+            await message.add_reaction(u"\u2705")  # Green checkmark emoji
+        elif streak_count <= 9:
+            await message.add_reaction(str(streak_count) + u"\u20e3")
+        else:
+            tens_digit = streak_count // 10
+            ones_digit = streak_count % 10
+            await message.add_reaction(str(tens_digit) + u"\u20e3")
+            await message.add_reaction(str(ones_digit) + u"\u20e3")
     else:
-        tens_digit = streak_count // 10
-        ones_digit = streak_count % 10
-        await message.add_reaction(str(tens_digit) + u"\u20e3")
-        await message.add_reaction(str(ones_digit) + u"\u20e3")
+        if count <= 9:
+            await message.add_reaction(str(count) + u"\u20e3")
+        else:
+            tens_digit = count // 10
+            ones_digit = count % 10
+            await message.add_reaction(str(tens_digit) + u"\u20e3")
+            await message.add_reaction(str(ones_digit) + u"\u20e3")
 
 
 # Define a function to reset the streak variables
@@ -562,7 +570,7 @@ async def on_message(message):
 
         # If the streak was broken, end the game
         if streak_count >= streak_threshold and message.author == streak_users.pop():
-            await message.channel.send(f'{message.author.mention} has broken the streak, better luck next time')
+            await message.channel.send(f'{message.author.mention} has broken the pasta, better luck next time')
             reset_streak()
             return
 
@@ -579,7 +587,7 @@ async def on_message(message):
 
         # If the streak threshold has been reached, announce the start of the contest and add reactions
         if streak_count == streak_threshold:
-            await message.channel.send(f'{streak_message} has been detected {streak_threshold} times, let\'s see who breaks the streak!')
+            await message.channel.send(f'PASTA ALERT! {streak_message} has been pasta\'d {streak_threshold} times, how long can we keep it going?')
             await add_reactions(message)
 
         # If the streak count is above the threshold, add reactions for the current streak count
@@ -589,7 +597,7 @@ async def on_message(message):
     # If the message does not match the streak message, reset the streak
     else:
         if streak_count >= streak_threshold:
-            await message.channel.send(f'{streak_users.pop().mention} has broken the streak, better luck next time')
+            await message.channel.send(f'{message.author.mention} has broken the pasta, better luck next time')
         reset_streak()
         streak_message = message.content
         streak_users.add(message.author)
