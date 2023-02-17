@@ -559,9 +559,6 @@ async def on_message(message):
 
     # If the message matches the streak message
     if message.content.lower() == streak_message.lower():
-        # If this user has already been counted in the streak, ignore their message
-        if len(streak_users) > 1 and message.author in streak_users:
-            return
 
         # If the streak was broken, end the game
         if streak_count >= streak_threshold and message.author == streak_users.pop():
