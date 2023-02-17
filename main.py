@@ -549,6 +549,13 @@ async def on_message(message):
     desired_channel_id = 798371943324844042  # Replace with the ID of the desired channel
     if message.channel.id != desired_channel_id:
         return
+    
+    # If there is no current streak message, set the message and return
+    if streak_message is None:
+        streak_message = message.content
+        streak_users.add(message.author)
+        streak_count = 1
+        return
 
     # If the message matches the streak message
     if message.content.lower() == streak_message.lower():
