@@ -518,25 +518,27 @@ streak_users = set()
 
 # Define a function to add the appropriate number of reaction emojis
 async def add_reactions(message, count=None):
-    if count is None:
-        if streak_count == streak_threshold:
-            await message.add_reaction(u"\u2705")  # Green checkmark emoji
-        elif streak_count <= 9:
-            await message.add_reaction(str(streak_count) + u"\u20e3")
+    try:
+        if count is None:
+            if streak_count == streak_threshold:
+                await message.add_reaction(u"\u2705")  # Green checkmark emoji
+            elif streak_count <= 9:
+                await message.add_reaction(str(streak_count) + u"\u20e3")
+            else:
+                tens_digit = streak_count // 10
+                ones_digit = streak_count % 10
+                await message.add_reaction(str(tens_digit) + u"\u20e3")
+                await message.add_reaction(str(ones_digit) + u"\u20e3")
         else:
-            tens_digit = streak_count // 10
-            ones_digit = streak_count % 10
-            await message.add_reaction(str(tens_digit) + u"\u20e3")
-            await message.add_reaction(str(ones_digit) + u"\u20e3")
-    else:
-        if count <= 9:
-            await message.add_reaction(str(count) + u"\u20e3")
-        else:
-            tens_digit = count // 10
-            ones_digit = count % 10
-            await message.add_reaction(str(tens_digit) + u"\u20e3")
-            await message.add_reaction(str(ones_digit) + u"\u20e3")
-
+            if count <= 9:
+                await message.add_reaction(str(count) + u"\u20e3")
+            else:
+                tens_digit = count // 10
+                ones_digit = count % 10
+                await message.add_reaction(str(tens_digit) + u"\u20e3")
+                await message.add_reaction(str(ones_digit) + u"\u20e3")
+    except Exception as e:
+        print(f"Error adding reactions: {e}")
 
 # Define a function to reset the streak variables
 def reset_streak():
