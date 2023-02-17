@@ -548,7 +548,7 @@ async def on_message(message):
         return
     
     # If the message matches the streak message
-    if message.content == streak_message:
+    if message.content.lower() == streak_message:
         # If this user has already been counted in the streak, ignore their message
         if len(streak_users) > 1 and message.author in streak_users:
             return
@@ -575,7 +575,7 @@ async def on_message(message):
         if streak_count >= streak_threshold:
             await message.channel.send(f'{streak_users.pop().mention} has broken the streak, better luck next time')
         reset_streak()
-        streak_message = message.content
+        streak_message = message.content.lower()
         streak_users.add(message.author)
         streak_count = 1
         await add_reactions(message)
