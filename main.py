@@ -520,14 +520,14 @@ streak_users = set()
 async def add_reactions(message):
     global streak_count
     if streak_count == streak_threshold:
-        if streak_count <= 9:
-            for i in range(1, streak_count+1):
-                await message.add_reaction(str(i) + u"\u20e3")
-        else:
-            tens_digit = streak_count // 10
-            ones_digit = streak_count % 10
-            await message.add_reaction(str(tens_digit) + u"\u20e3")
-            await message.add_reaction(str(ones_digit) + u"\u20e3")
+        await message.add_reaction(u"\u2705")  # Green checkmark emoji
+    elif streak_count <= 9:
+        await message.add_reaction(str(streak_count) + u"\u20e3")
+    else:
+        tens_digit = streak_count // 10
+        ones_digit = streak_count % 10
+        await message.add_reaction(str(tens_digit) + u"\u20e3")
+        await message.add_reaction(str(ones_digit) + u"\u20e3")
 
 
 # Define a function to reset the streak variables
@@ -576,7 +576,7 @@ async def on_message(message):
         streak_count += 1
 
         # If the streak threshold has been reached, announce the start of the contest and add reactions
-        if streak_count == streak_threshold:
+        if streak_count >= streak_threshold:
             await message.channel.send(f'{streak_message} has been detected {streak_threshold} times, let\'s see who breaks the streak!')
             await add_reactions(message)
 
