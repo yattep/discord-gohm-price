@@ -519,14 +519,16 @@ streak_users = set()
 # Define a function to add the appropriate number of reaction emojis
 async def add_reactions(message):
     global streak_count
-    if streak_count <= 9:
-        for i in range(1, streak_count+1):
-            await message.add_reaction(str(i) + u"\u20e3")
-    else:
-        tens_digit = streak_count // 10
-        ones_digit = streak_count % 10
-        await message.add_reaction(str(tens_digit) + u"\u20e3")
-        await message.add_reaction(str(ones_digit) + u"\u20e3")
+    if streak_count == streak_threshold:
+        if streak_count <= 9:
+            for i in range(1, streak_count+1):
+                await message.add_reaction(str(i) + u"\u20e3")
+        else:
+            tens_digit = streak_count // 10
+            ones_digit = streak_count % 10
+            await message.add_reaction(str(tens_digit) + u"\u20e3")
+            await message.add_reaction(str(ones_digit) + u"\u20e3")
+
 
 # Define a function to reset the streak variables
 def reset_streak():
@@ -538,47 +540,47 @@ def reset_streak():
 @sentinel_bot.event
 async def on_message(message):
     global streak_message, streak_count, streak_users
-    
+
     # Ignore messages from the bot itself
     if message.author == sentinel_bot.user:
         return
-    
+
+    # Check if the message was sent in the desired channel
     desired_channel_id = 798371943324844042  # Replace with the ID of the desired channel
     if message.channel.id != desired_channel_id:
         return
-    
+
     # If the message matches the streak message
-    if message.content.lower() == streak_message:
+    if message.content.lower() == streak_message.lower():
         # If this user has already been counted in the streak, ignore their message
         if len(streak_users) > 1 and message.author in streak_users:
             return
-        
+
         # If the streak was broken, end the game
         if streak_count >= streak_threshold and message.author == streak_users.pop():
             await message.channel.send(f'{message.author.mention} has broken the streak, better luck next time')
             reset_streak()
             return
-        
+
         # Add the user to the set of streak participants
         streak_users.add(message.author)
-        
-        # Increment the streak count and add reactions
+
+        # Increment the streak count
         streak_count += 1
-        await add_reactions(message)
-        
-        # If the streak threshold has been reached, announce the start of the contest
+
+        # If the streak threshold has been reached, announce the start of the contest and add reactions
         if streak_count == streak_threshold:
             await message.channel.send(f'{streak_message} has been detected {streak_threshold} times, let\'s see who breaks the streak!')
-    
+            await add_reactions(message)
+
     # If the message does not match the streak message, reset the streak
     else:
         if streak_count >= streak_threshold:
             await message.channel.send(f'{streak_users.pop().mention} has broken the streak, better luck next time')
         reset_streak()
-        streak_message = message.content.lower()
+        streak_message = message.content
         streak_users.add(message.author)
         streak_count = 1
-        await add_reactions(message)
 
 
 ###SENTINEL BOT END###
