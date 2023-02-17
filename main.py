@@ -559,7 +559,9 @@ async def on_message(message):
 
     # If the message matches the streak message
     if message.content.lower() == streak_message.lower():
-
+        if message.author == streak_users.pop():
+            reset_streak()
+            return
         # If the streak was broken, end the game
         if streak_count >= streak_threshold and message.author == streak_users.pop():
             await message.channel.send(f'{message.author.mention} has broken the streak, better luck next time')
