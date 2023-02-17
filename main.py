@@ -559,12 +559,15 @@ async def on_message(message):
 
     # If the message matches the streak message
     if message.content.lower() == streak_message.lower():
-        if message.author == streak_users.pop():
-            reset_streak()
-            return
+
         # If the streak was broken, end the game
         if streak_count >= streak_threshold and message.author == streak_users.pop():
             await message.channel.send(f'{message.author.mention} has broken the streak, better luck next time')
+            reset_streak()
+            return
+
+        # If the same user sent the same message, reset the streak without saying anything
+        if streak_count < streak_threshold and message.author == list(streak_users)[-1] and message.content.lower() == streak_message.lower():
             reset_streak()
             return
 
@@ -577,10 +580,11 @@ async def on_message(message):
         # If the streak threshold has been reached, announce the start of the contest and add reactions
         if streak_count == streak_threshold:
             await message.channel.send(f'{streak_message} has been detected {streak_threshold} times, let\'s see who breaks the streak!')
-        
-        # Add reactions for all messages after the streak threshold is hit
-        if streak_count >= streak_threshold:
             await add_reactions(message)
+
+        # If the streak count is above the threshold, add reactions for the current streak count
+        elif streak_count > streak_threshold:
+            await add_reactions(message, streak_count - streak_threshold)
 
     # If the message does not match the streak message, reset the streak
     else:
