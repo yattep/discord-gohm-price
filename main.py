@@ -549,7 +549,7 @@ async def on_message(message):
     desired_channel_id = 798371943324844042  # Replace with the ID of the desired channel
     if message.channel.id != desired_channel_id:
         return
-    
+
     # If there is no current streak message, set the message and return
     if streak_message is None:
         streak_message = message.content
@@ -576,8 +576,11 @@ async def on_message(message):
         streak_count += 1
 
         # If the streak threshold has been reached, announce the start of the contest and add reactions
-        if streak_count >= streak_threshold:
+        if streak_count == streak_threshold:
             await message.channel.send(f'{streak_message} has been detected {streak_threshold} times, let\'s see who breaks the streak!')
+        
+        # Add reactions for all messages after the streak threshold is hit
+        if streak_count >= streak_threshold:
             await add_reactions(message)
 
     # If the message does not match the streak message, reset the streak
