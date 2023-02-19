@@ -125,10 +125,12 @@ def get_7d_floating_supply():
 
 def check_outlier(data):
     mean = statistics.mean(data.values())
+    print(f'Mean: {mean}')
     stdev = statistics.stdev(data.values())
-    
+    print(f'Standard Deviation: {stdev}')
     for date, value in list(data.items()):
         if abs(value - mean) > stdev:
+            print(f'Removing: {data[date]}')
             del data[date]
     
     return data

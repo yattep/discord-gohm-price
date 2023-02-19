@@ -616,8 +616,6 @@ async def on_message(message):
         streak_count = 1
         print(f"Streak start reset: {streak_message}, {streak_count}, {streak_users}")
 
-
-
 ###SENTINEL BOT END###
 
 #run
