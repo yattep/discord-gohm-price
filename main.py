@@ -577,6 +577,9 @@ async def on_message(message):
     if streak_count < streak_threshold and message.author == list(streak_users)[-1] and message.content.lower() == streak_message.lower():
         reset_streak()
         print(f"Streak reset without saying anything: {streak_message}, {streak_count}, {streak_users}")
+        streak_message = message.content
+        streak_users.add(message.author)
+        streak_count = 1
         return
 
     # If the message matches the streak message
