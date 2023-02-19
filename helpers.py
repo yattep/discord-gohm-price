@@ -129,11 +129,12 @@ def check_outlier(data):
     stdev = statistics.stdev(data.values())
     print(f'Standard Deviation: {stdev}')
     for date, value in list(data.items()):
-        if abs(value - mean) > stdev:
+        if abs(value - mean) > 2 * stdev:
             print(f'Removing: {data[date]}')
             del data[date]
     
     return data
+
 
 def get_records_with_highest_block(data):
     token_records = data['data']['tokenRecords']
