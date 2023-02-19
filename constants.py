@@ -10,7 +10,7 @@ def get_token_supply_7d_query():
     date_7d_ago = (today - timedelta(days=7)).strftime('%Y-%m-%d')
     return {"query": f"{{tokenSupplies( where: {{date_gt: \"{date_7d_ago}\"}}, orderBy: block, orderDirection: desc, first: 1000) {{ type date supplyBalance tokenAddress source sourceAddress pool poolAddress }}}}"}
 
-PRICE_UPDATE_INTERVAL = 10 # in minutes
+PRICE_UPDATE_INTERVAL = 20 # in minutes
 GENERIC_UPDATE_INTERVAL = 10 # in minutes
 LB_UPDATE_INTERVAL = 720 # in minutes
 SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/olympus-protocol-metrics'
