@@ -30,6 +30,57 @@ def human_format(num):
         return '${:.0f}{}'.format(num, ['', 'K', 'M', 'B', 'T'][magnitude])
     else:
         return '${:.1f}{}'.format(num, ['', 'K', 'M', 'B', 'T'][magnitude])
+    
+def check_outlier(data):
+    mean = statistics.mean(data.values())
+    print(f'Mean: {mean}')
+    stdev = statistics.stdev(data.values())
+    print(f'Standard Deviation: {stdev}')
+    print(f'2.5 Standard Deviations: {2.5 * stdev}')
+    for date, value in list(data.items()):
+        if abs(value - mean) > 2.5 * stdev:
+            print(f'Removing: {data[date]}')
+            del data[date]
+    
+    return data
+
+
+def get_records_with_highest_block(data, data_type):
+    if data_type == constants.DataType.TOKEN_RECORDS.value:
+        data_records = data['data'][constants.DataType.TOKEN_RECORDS.value]
+
+    if data_type == constants.DataType.TOKEN_SUPPLIES.value:
+        data_records = data['data'][constants.DataType.TOKEN_SUPPLIES.value]
+    
+    records_by_date = {}
+    for record in data_records:
+        date = record['date']
+        if date not in records_by_date:
+            records_by_date[date] = []
+        records_by_date[date].append(record)
+
+    records_with_highest_block = []
+    for date, records in records_by_date.items():
+        highest_block = max([int(record['block']) for record in records])
+        records_with_highest_block.extend([record for record in records if int(record['block']) == highest_block])
+
+    return records_with_highest_block
+
+def aggregate_tkn_vals(data):
+    aggregated_data = {}
+    
+    # loop through the tokenRecords (pre-cleansed) array
+    for token_record in data:
+        # check if the liquid"
+        if token_record['isLiquid'] == True:
+            # convert the value string to a float
+            token_value = float(token_record['valueExcludingOhm'])
+            date = token_record['date']
+            # add the token (excluding OHM) value to the aggregated data for the date
+            aggregated_data[date] = aggregated_data.get(date, 0) + token_value
+
+  # return the sum of supplyBalance values for each date
+    return aggregated_data
 
 def get_latest_block():
     data = get_data(constants.SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
@@ -127,57 +178,6 @@ def get_7d_floating_supply():
             date = token_supply['date']
             # add the supplyBalance value to the aggregated data for the date
             aggregated_data[date] = aggregated_data.get(date, 0) + supply_balance
-
-  # return the sum of supplyBalance values for each date
-    return aggregated_data
-
-def check_outlier(data):
-    mean = statistics.mean(data.values())
-    print(f'Mean: {mean}')
-    stdev = statistics.stdev(data.values())
-    print(f'Standard Deviation: {stdev}')
-    print(f'2.5 Standard Deviations: {2.5 * stdev}')
-    for date, value in list(data.items()):
-        if abs(value - mean) > 2.5 * stdev:
-            print(f'Removing: {data[date]}')
-            del data[date]
-    
-    return data
-
-
-def get_records_with_highest_block(data, data_type):
-    if data_type == constants.DataType.TOKEN_RECORDS.value:
-        data_records = data['data'][constants.DataType.TOKEN_RECORDS.value]
-
-    if data_type == constants.DataType.TOKEN_SUPPLIES.value:
-        data_records = data['data'][constants.DataType.TOKEN_SUPPLIES.value]
-    
-    records_by_date = {}
-    for record in data_records:
-        date = record['date']
-        if date not in records_by_date:
-            records_by_date[date] = []
-        records_by_date[date].append(record)
-
-    records_with_highest_block = []
-    for date, records in records_by_date.items():
-        highest_block = max([int(record['block']) for record in records])
-        records_with_highest_block.extend([record for record in records if int(record['block']) == highest_block])
-
-    return records_with_highest_block
-
-def aggregate_tkn_vals(data):
-    aggregated_data = {}
-    
-    # loop through the tokenRecords (pre-cleansed) array
-    for token_record in data:
-        # check if the liquid"
-        if token_record['isLiquid'] == True:
-            # convert the value string to a float
-            token_value = float(token_record['valueExcludingOhm'])
-            date = token_record['date']
-            # add the token (excluding OHM) value to the aggregated data for the date
-            aggregated_data[date] = aggregated_data.get(date, 0) + token_value
 
   # return the sum of supplyBalance values for each date
     return aggregated_data
