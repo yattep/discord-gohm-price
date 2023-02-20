@@ -128,9 +128,9 @@ def check_outlier(data):
     print(f'Mean: {mean}')
     stdev = statistics.stdev(data.values())
     print(f'Standard Deviation: {stdev}')
-    print(f'2 Standard Deviations: {2 * stdev}')
+    print(f'2.5 Standard Deviations: {2.5 * stdev}')
     for date, value in list(data.items()):
-        if abs(value - mean) > 2 * stdev:
+        if abs(value - mean) > 2.5 * stdev:
             print(f'Removing: {data[date]}')
             del data[date]
     
