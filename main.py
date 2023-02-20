@@ -272,7 +272,7 @@ async def getrunninglb(ctx):
         data = get_7d_lb_sma_raw()
         embed = discord.Embed(title="7 Day Liquid Backing", color=discord.Color.blue())
         for k, v in data.items():
-            embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
+            embed.add_field(name=k, value=f"${v:,.4f}", inline=False)
         await ctx.send(embed=embed)
     except:
         traceback.print_exc()
