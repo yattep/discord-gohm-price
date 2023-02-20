@@ -46,10 +46,10 @@ def check_outlier(data):
 
 
 def get_records_with_highest_block(data, data_type):
-    if data_type == constants.DataType.TOKEN_RECORDS.value:
+    if data_type == constants.DataType.TOKEN_RECORDS:
         data_records = data['data'][constants.DataType.TOKEN_RECORDS.value]
 
-    if data_type == constants.DataType.TOKEN_SUPPLIES.value:
+    if data_type == constants.DataType.TOKEN_SUPPLIES:
         data_records = data['data'][constants.DataType.TOKEN_SUPPLIES.value]
     
     records_by_date = {}
