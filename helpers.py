@@ -170,7 +170,7 @@ def get_7d_floating_supply():
     aggregated_data = {}
     
     # loop through the tokenSupplies array
-    for token_supply in data['tokenSupplies']:
+    for token_supply in data:
         # check if the type is not "OHM Bonds (Vesting Tokens)"
         if token_supply['type'] != "OHM Bonds (Vesting Tokens)":
             # convert the supplyBalance string to a float
