@@ -591,7 +591,7 @@ async def on_message(message):
             captain_planet_url = "https://media.tenor.com/WrD2KCj7EEIAAAAC/captain-planet.gif"
             image_data = get_image_data(captain_planet_url)
             caption = "By your powers combined... I AM CAPTAIN PLANET!"
-            await message.channel.send(content=caption, file=image_data, filename="captain_planet.gif")
+            await message.channel.send(content=caption, file=image_data)
 
         return
 
