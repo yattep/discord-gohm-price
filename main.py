@@ -623,7 +623,12 @@ async def on_message(message):
         # If the streak count is above the threshold, add reactions for the current streak count
         elif streak_count > streak_threshold:
             await add_reactions(message, streak_count - streak_threshold)
-
+    elif streak_count >= streak_threshold and sequence_position > 0:
+        await message.channel.send(f'{message.author.mention} do you hate the planet or something? Be more considerate of our environment, ser.')
+        reset_streak()
+        streak_message = message.content
+        streak_users = [(message.author, 1)]
+        streak_count = 1
     # If the message does not match the streak message, reset the streak
     else:
         if streak_count >= streak_threshold:
