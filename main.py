@@ -1,6 +1,8 @@
 ### imports
 import os
+import io
 import time
+import requests
 import discord
 from discord.ext import commands
 from discord.ext import tasks
@@ -10,7 +12,7 @@ import traceback
 import constants
 import asyncio
 from datetime import datetime, timedelta
-from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, human_format
+from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, human_format, get_image_data
 
 ###GOHM PRICE BOT START###
 olyprice_bot = commands.Bot(command_prefix="olyprice!")
@@ -515,6 +517,7 @@ streak_threshold = 3
 streak_message = None
 streak_count = 0
 streak_users = set()
+sequence_position = 0
 
 # Define a function to add the appropriate number of reaction emojis
 async def add_reactions(message, count=None):
@@ -554,14 +557,15 @@ async def add_reactions(message, count=None):
 
 # Define a function to reset the streak variables
 def reset_streak():
-    global streak_message, streak_count, streak_users
+    global streak_message, streak_count, streak_users, sequence_position
     streak_message = None
     streak_count = 0
     streak_users = []
+    sequence_position = 0
 
 @sentinel_bot.event
 async def on_message(message):
-    global streak_message, streak_count, streak_users
+    global streak_message, streak_count, streak_users, sequence_position
 
     # Ignore messages from the bot itself
     if message.author == sentinel_bot.user:
@@ -570,6 +574,25 @@ async def on_message(message):
     # Check if the message was sent in the desired channel
     desired_channel_id = 798371943324844042  # Replace with the ID of the desired channel
     if message.channel.id != desired_channel_id:
+        return
+
+    # Check for Captain Planet streak message sequence
+    if sequence_position < len(constants.STREAK_MESSAGE_SEQUENCE) and message.content.lower() == constants.STREAK_MESSAGE_SEQUENCE[sequence_position]:
+        print(f'{message.author} said {constants.STREAK_MESSAGE_SEQUENCE[sequence_position]}')
+        sequence_position += 1
+        streak_users.append(message.author)
+        streak_count += 1
+        if sequence_position == len(constants.STREAK_MESSAGE_SEQUENCE):
+            print('Captain Planet Summoned')
+            sequence_position = 0
+            streak_message = None
+            streak_users = []
+            streak_count = 0
+            captain_planet_url = "https://media.tenor.com/WrD2KCj7EEIAAAAC/captain-planet.gif"
+            image_data = get_image_data(captain_planet_url)
+            caption = "By your powers combined... I AM CAPTAIN PLANET!"
+            await message.channel.send(content=caption, file=image_data, filename="captain_planet.gif")
+
         return
 
     # If there is no current streak message, set the message and return

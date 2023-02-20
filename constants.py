@@ -23,6 +23,7 @@ TOKEN_SUPPLY_7D_QUERY = get_token_supply_7d_query()
 TOKEN_RECORD_QUERY = "{{tokenRecords( where: {{block: \"{}\"}}) {{ value valueExcludingOhm tokenAddress token isLiquid category multiplier }}}}"
 TOKEN_RECORD_7D_QUERY = get_token_record_7d_query()
 INDEX_PRICE_QUERY = "{{protocolMetrics(first: 1, where: {{block: \"{}\"}}) {{ currentIndex ohmPrice gOhmPrice }}}}"
+STREAK_MESSAGE_SEQUENCE = ['earth', 'fire', 'wind', 'water', 'heart', 'go planet']
 ADMIN_ROLE = "Scholars"
 GRASSHOPPER = "Grasshoppers"
 DATE_FORMAT = '%m/%d %-I:%M%p'

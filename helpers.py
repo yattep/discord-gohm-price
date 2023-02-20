@@ -2,6 +2,7 @@ import requests
 import constants
 import json
 import statistics
+import io
 ## HELPERS
 
 def get_data(url, queryFormat, construct = False):
@@ -12,6 +13,11 @@ def get_data(url, queryFormat, construct = False):
     raw = requests.post(url, json = query)
     raw_json = json.loads(raw.text)
     return raw_json
+
+def get_image_data(image_url):
+    response = requests.get(image_url)
+    image_bytes = io.BytesIO(response.content).getvalue()
+    return image_bytes
 
 def human_format(num):
     magnitude = 0
