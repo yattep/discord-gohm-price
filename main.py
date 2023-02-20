@@ -550,7 +550,7 @@ def reset_streak():
     global streak_message, streak_count, streak_users
     streak_message = None
     streak_count = 0
-    streak_users = set()
+    streak_users = []
 
 @sentinel_bot.event
 async def on_message(message):
@@ -568,17 +568,7 @@ async def on_message(message):
     # If there is no current streak message, set the message and return
     if streak_message is None:
         streak_message = message.content
-        streak_users.add(message.author)
-        streak_count = 1
-        print(f"Streak started: {streak_message}, {streak_count}, {streak_users}")
-        return
-
-    # If the same user sent the same message, reset the streak without saying anything
-    if streak_count < streak_threshold and message.author == list(streak_users)[-1] and message.content.lower() == streak_message.lower():
-        reset_streak()
-        print(f"Streak reset without saying anything: {streak_message}, {streak_count}, {streak_users}")
-        streak_message = message.content
-        streak_users.add(message.author)
+        streak_users = [(message.author, 1)]
         streak_count = 1
         return
 
@@ -586,18 +576,17 @@ async def on_message(message):
     if message.content.lower() == streak_message.lower():
 
         # If the streak was broken, end the game
-        if streak_count >= streak_threshold and message.author == list(streak_users)[-1]:
+        if streak_count >= streak_threshold and message.author == streak_users[-1][0]:
             await message.channel.send(f'{message.author.mention} failed, can\'t pasta twice bruv, better luck next time!')
             reset_streak()
             print(f"Streak ended: {streak_message}, {streak_count}, {streak_users}")
             return
 
         # Add the user to the set of streak participants
-        streak_users.add(message.author)
+        streak_users.append((message.author, streak_count))
 
         # Increment the streak count
         streak_count += 1
-        print(f"Streak continued: {streak_message}, {streak_count}, {streak_users}")
 
         # If the streak threshold has been reached, announce the start of the contest and add reactions
         if streak_count == streak_threshold:
@@ -614,9 +603,9 @@ async def on_message(message):
             await message.channel.send(f'{message.author.mention} has broken the pasta, thx for nothing buzzkill. Better luck next time!')
         reset_streak()
         streak_message = message.content
-        streak_users.add(message.author)
+        streak_users = [(message.author, 1)]
         streak_count = 1
-        print(f"Streak reset: {streak_message}, {streak_count}, {streak_users}")
+
 
 ###SENTINEL BOT END###
 
