@@ -113,11 +113,13 @@ def get_combined_lb_total():
 
 def get_7d_floating_supply():
     data = get_data(constants.SUBGRAPH_URL,constants.get_token_supply_7d_query())
+  # get data from highest block per day
+    data = get_records_with_highest_block(data, constants.DataType.TOKEN_SUPPLIES)
   # create a dictionary to store the sum of supplyBalance values for each date
     aggregated_data = {}
     
     # loop through the tokenSupplies array
-    for token_supply in data['data']['tokenSupplies']:
+    for token_supply in data['tokenSupplies']:
         # check if the type is not "OHM Bonds (Vesting Tokens)"
         if token_supply['type'] != "OHM Bonds (Vesting Tokens)":
             # convert the supplyBalance string to a float
@@ -143,11 +145,15 @@ def check_outlier(data):
     return data
 
 
-def get_records_with_highest_block(data):
-    token_records = data['data']['tokenRecords']
+def get_records_with_highest_block(data, data_type):
+    if data_type == constants.DataType.TOKEN_RECORDS.value:
+        data_records = data['data'][constants.DataType.TOKEN_RECORDS.value]
+
+    if data_type == constants.DataType.TOKEN_SUPPLIES.value:
+        data_records = data['data'][constants.DataType.TOKEN_SUPPLIES.value]
     
     records_by_date = {}
-    for record in token_records:
+    for record in data_records:
         date = record['date']
         if date not in records_by_date:
             records_by_date[date] = []
@@ -179,14 +185,14 @@ def aggregate_tkn_vals(data):
 def get_7d_eth_token_values():
     data = get_data(constants.SUBGRAPH_URL,constants.get_token_record_7d_query())
   # cleanse to remove extra blocks per day
-    data = get_records_with_highest_block(data)
+    data = get_records_with_highest_block(data, constants.DataType.TOKEN_RECORDS)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
 def get_7d_arbi_token_values():
     data = get_data(constants.ARBI_SUBGRAPH_URL,constants.get_token_record_7d_query())
   # cleanse to remove extra blocks per day
-    data = get_records_with_highest_block(data)
+    data = get_records_with_highest_block(data, constants.DataType.TOKEN_RECORDS)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
@@ -194,7 +200,7 @@ def get_7d_arbi_token_values():
 def get_7d_poly_token_values():
     data = get_data(constants.POLY_SUBGRAPH_URL,constants.get_token_record_7d_query())
   # cleanse to remove extra blocks per day
-    data = get_records_with_highest_block(data)
+    data = get_records_with_highest_block(data, constants.DataType.TOKEN_RECORDS)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 
@@ -202,7 +208,7 @@ def get_7d_poly_token_values():
 def get_7d_ftm_token_values():
     data = get_data(constants.FTM_SUBGRAPH_URL,constants.get_token_record_7d_query())
   # cleanse to remove extra blocks per day
-    data = get_records_with_highest_block(data)
+    data = get_records_with_highest_block(data, constants.DataType.TOKEN_RECORDS)
   # return the sum of supplyBalance values for each date
     return aggregate_tkn_vals(data)
 

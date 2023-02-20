@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from enum import Enum
 
 def get_token_record_7d_query():
     today = datetime.utcnow().date()
@@ -8,7 +9,7 @@ def get_token_record_7d_query():
 def get_token_supply_7d_query():
     today = datetime.utcnow().date()
     date_7d_ago = (today - timedelta(days=7)).strftime('%Y-%m-%d')
-    return {"query": f"{{tokenSupplies( where: {{date_gt: \"{date_7d_ago}\"}}, orderBy: block, orderDirection: desc, first: 1000) {{ type date supplyBalance tokenAddress source sourceAddress pool poolAddress }}}}"}
+    return {"query": f"{{tokenSupplies( where: {{date_gt: \"{date_7d_ago}\"}}, orderBy: block, orderDirection: desc, first: 1000) {{ block type date supplyBalance tokenAddress source sourceAddress pool poolAddress }}}}"}
 
 PRICE_UPDATE_INTERVAL = 20 # in minutes
 GENERIC_UPDATE_INTERVAL = 10 # in minutes
@@ -32,3 +33,7 @@ GENERAL_CHANNEL = 823623103874990091
 OT_CHANNEL = 798371943324844042
 LEARN_CHANNEL = 817567648451133461
 EXPIRATION = 120
+
+class DataType(Enum):
+    TOKEN_RECORDS = 'tokenRecords'
+    TOKEN_SUPPLIES = 'tokenSupplies'
