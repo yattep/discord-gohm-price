@@ -516,7 +516,7 @@ streak_threshold = 3
 # Initialize variables to track the streak
 streak_message = None
 streak_count = 0
-streak_users = set()
+streak_users = []
 sequence_position = 0
 
 # Define a function to add the appropriate number of reaction emojis
@@ -584,10 +584,7 @@ async def on_message(message):
         streak_count += 1
         if sequence_position == len(constants.STREAK_MESSAGE_SEQUENCE):
             print('Captain Planet Summoned')
-            sequence_position = 0
-            streak_message = None
-            streak_users = []
-            streak_count = 0
+            reset_streak()
             captain_planet_url = "https://media.tenor.com/WrD2KCj7EEIAAAAC/captain-planet.gif"
             image_data = get_image_data(captain_planet_url)
             caption = "By your powers combined... I AM CAPTAIN PLANET!"
