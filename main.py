@@ -526,6 +526,9 @@ async def add_reactions(message, count=None):
             # If the count is less than or equal to 9, add the corresponding number emoji
             elif streak_count <= 9:
                 await message.add_reaction(str(streak_count) + u"\u20e3")
+            # If the count is 33, add the custom :33: reaction
+            elif streak_count == 33:
+                await message.add_reaction(":33:")
             # If the count is greater than 9, add the tens and ones digit emojis
             else:
                 tens_digit = streak_count // 10
@@ -536,6 +539,9 @@ async def add_reactions(message, count=None):
             # If the count is less than or equal to 9, add the corresponding number emoji
             if count <= 9:
                 await message.add_reaction(str(count) + u"\u20e3")
+            # If the count is 33, add the custom :33: reaction
+            elif count == 33:
+                await message.add_reaction(":33:")
             # If the count is greater than 9, add the tens and ones digit emojis
             else:
                 tens_digit = count // 10
@@ -544,6 +550,7 @@ async def add_reactions(message, count=None):
                 await message.add_reaction(str(ones_digit) + u"\u20e3")
     except Exception as e:
         print(f"Error adding reactions: {e}")
+
 
 # Define a function to reset the streak variables
 def reset_streak():
