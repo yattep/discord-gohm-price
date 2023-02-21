@@ -1,8 +1,8 @@
 import requests
 import constants
 import json
-import statistics
 import io
+import numpy as np
 ## HELPERS
 
 def get_data(url, queryFormat, construct = False):
@@ -33,13 +33,17 @@ def human_format(num):
     
 def check_outlier(data):
     sorted_data = sorted(data.values())
-    Q1, Q3 = statistics.quantiles(sorted_data, n=4, method='inclusive')
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
+
+    median = np.median(sorted_data)
+    mad = np.median([np.abs(value - median) for value in sorted_data])
+
+    mad_lower_bound = median - 15 * mad
+    mad_upper_bound = median + 15 * mad
+    print(f'Upper bound: {mad_upper_bound}')
+    print(f'Lower bound: {mad_lower_bound}')
     
     for date, value in list(data.items()):
-        if value < lower_bound or value > upper_bound:
+        if value < mad_lower_bound or value > mad_upper_bound:
             print(f'Removing: {data[date]}')
             del data[date]
     
