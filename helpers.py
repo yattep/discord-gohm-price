@@ -32,13 +32,14 @@ def human_format(num):
         return '${:.1f}{}'.format(num, ['', 'K', 'M', 'B', 'T'][magnitude])
     
 def check_outlier(data):
-    mean = statistics.mean(data.values())
-    print(f'Mean: {mean}')
-    stdev = statistics.stdev(data.values())
-    print(f'Standard Deviation: {stdev}')
-    print(f'2.5 Standard Deviations: {2.5 * stdev}')
+    sorted_data = sorted(data.values())
+    Q1, Q3 = statistics.quantiles(sorted_data, n=4, method='inclusive')
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    
     for date, value in list(data.items()):
-        if abs(value - mean) > 2.5 * stdev:
+        if value < lower_bound or value > upper_bound:
             print(f'Removing: {data[date]}')
             del data[date]
     
