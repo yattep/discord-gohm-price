@@ -1,8 +1,6 @@
 ### imports
 import os
-import io
 import time
-import requests
 import discord
 from discord.ext import commands
 from discord.ext import tasks
@@ -11,7 +9,6 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
-from datetime import datetime, timedelta
 from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, get_current_day_lb, human_format, get_image_data
 
 ###GOHM PRICE BOT START###
