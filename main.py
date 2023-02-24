@@ -249,7 +249,7 @@ async def getrawfloating(ctx):
 @lb_sma_bot.command(pass_context=True)
 async def ping(ctx):
     lb_today = get_current_day_lb()
-    lb_7d, removed, upper, lower = get_7d_lb_sma()
+    _, removed, upper, lower = get_7d_lb_sma()
     embed = discord.Embed(title="Pong", color=discord.Color.blue())
     embed.add_field(name="Current LB", value=f"${lb_today:,.2f}", inline=False)
     embed.add_field(name="Upper Bound", value=f"${upper:,.2f}", inline=False)
@@ -301,7 +301,7 @@ async def update_lb():
 
 async def get_ohm_lb():
     try:
-        lb_val = get_7d_lb_sma()
+        lb_val, _, _, _ = get_7d_lb_sma()
     
         return human_format(lb_val)
     except:
