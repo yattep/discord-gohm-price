@@ -6,7 +6,6 @@ import requests
 import discord
 from discord.ext import commands
 from discord.ext import tasks
-from discord_slash import SlashCommand
 import json
 from pycoingecko import CoinGeckoAPI
 import traceback
@@ -199,7 +198,6 @@ async def get_ohm_index():
 
 ###OHM LB SMA BOT START###
 lb_sma_bot = commands.Bot(command_prefix="ohmliq!")
-lb_slashes = SlashCommand(lb_sma_bot, sync_commands=True)
 
 ### OHM LB SMA bot log in
 @lb_sma_bot.event
@@ -249,7 +247,6 @@ async def getrawfloating(ctx):
         traceback.print_exc()
 
 @lb_sma_bot.command(pass_context=True)
-@lb_slashes.slash(name="ping")
 async def ping(ctx):
     lb_today = get_current_day_lb()
     _, removed, upper, lower = get_7d_lb_sma()
