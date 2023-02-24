@@ -7,7 +7,7 @@ import numpy as np
 
 def get_data(url, queryFormat, construct = False):
     if construct:
-        query = { "query": queryFormat.format(get_latest_block()) }
+        query = { "query": queryFormat.format(get_latest_block(url)) }
     else:
         query = queryFormat
     raw = requests.post(url, json = query)
@@ -89,24 +89,16 @@ def aggregate_tkn_vals(data):
   # return the sum of supplyBalance values for each date
     return aggregated_data
 
-def get_latest_block():
-    data = get_data(constants.SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+def get_latest_block(url):
+    if url == constants.SUBGRAPH_URL:
+      data = get_data(constants.SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+    elif url == constants.ARBI_SUBGRAPH_URL:
+      data = get_data(constants.ARBI_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+    elif url == constants.POLY_SUBGRAPH_URL:
+      data = get_data(constants.POLY_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
+    else:
+      data = get_data(constants.FTM_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
     
-    return data['data']['tokenRecords'][0]['block']
-
-def get_latest_arbi_block():
-    data = get_data(constants.ARBI_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
-
-    return data['data']['tokenRecords'][0]['block']
-
-def get_latest_ftm_block():
-    data = get_data(constants.FTM_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
-
-    return data['data']['tokenRecords'][0]['block']
-
-def get_latest_poly_block():
-    data = get_data(constants.POLY_SUBGRAPH_URL, constants.BLOCK_REQUEST_QUERY)
-
     return data['data']['tokenRecords'][0]['block']
 
 def get_price_ohm():
