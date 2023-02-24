@@ -12,7 +12,7 @@ import traceback
 import constants
 import asyncio
 from datetime import datetime, timedelta
-from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, human_format, get_image_data
+from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, get_current_day_lb, human_format, get_image_data
 
 ###GOHM PRICE BOT START###
 olyprice_bot = commands.Bot(command_prefix="olyprice!")
@@ -248,11 +248,15 @@ async def getrawfloating(ctx):
 
 @lb_sma_bot.command(pass_context=True)
 async def ping(ctx):
-    today = datetime.utcnow().date()
-    date_7d_ago = (today - timedelta(days=7)).strftime('%Y-%m-%d')
+    lb_today = get_current_day_lb()
+    lb_7d, removed, upper, lower = get_7d_lb_sma()
     embed = discord.Embed(title="Pong", color=discord.Color.blue())
-    embed.add_field(name="Today(UTC)", value=today, inline=False)
-    embed.add_field(name="7D Ago(UTC)", value=date_7d_ago, inline=False)
+    embed.add_field(name="Current LB", value=f"${lb_today:,.2f}", inline=False)
+    embed.add_field(name="Upper Bound", value=f"${upper:,.2f}", inline=False)
+    embed.add_field(name="Lower Bound", value=f"${lower:,.2f}", inline=False)
+    if removed:
+        excluded_values = "\n".join([f"{k}: ${v:,.2f}" for k, v in removed.items()])
+        embed.add_field(name="Excluded Value(s)", value=excluded_values, inline=False)
     await ctx.send(embed=embed)
 
 @lb_sma_bot.command(pass_context=True)

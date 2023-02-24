@@ -41,13 +41,15 @@ def check_outlier(data):
     mad_upper_bound = median + 15 * mad
     print(f'Upper bound: {mad_upper_bound}')
     print(f'Lower bound: {mad_lower_bound}')
-    
+
+    deleted_items = []
     for date, value in list(data.items()):
         if value < mad_lower_bound or value > mad_upper_bound:
             print(f'Removing: {data[date]}')
+            deleted_items.append((date, data[date]))
             del data[date]
-    
-    return data
+
+    return data, deleted_items, mad_upper_bound, mad_lower_bound
 
 
 def get_records_with_highest_block(data, data_type):
@@ -167,6 +169,12 @@ def get_lb_total_ftm():
 def get_combined_lb_total():
     return get_lb_total_eth() + get_lb_total_arbi() + get_lb_total_poly() + get_lb_total_ftm()
 
+def get_current_day_lb():
+    combined_token_vals = get_combined_lb_total()
+    floating_supply = get_floating_supply()
+
+    return combined_token_vals / floating_supply
+
 def get_7d_floating_supply():
     data = get_data(constants.SUBGRAPH_URL,constants.get_token_supply_7d_query())
   # get data from highest block per day
@@ -247,12 +255,12 @@ def get_7d_lb_sma():
         except KeyError:
             # Skip this iteration if the date is not present in the second array
             continue
-    result = check_outlier(result)
+    result, removed, upper, lower = check_outlier(result)
   # Get the 7 day SMA
     sum_of_values = sum(result.values())
     average = sum_of_values / len(result)
 
-    return average
+    return average, removed, upper, lower
 
 def get_7d_lb_sma_raw():
   # Get the necessary values to determine Liquid Backing per Floating OHM
