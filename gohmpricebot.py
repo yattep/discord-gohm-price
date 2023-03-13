@@ -16,7 +16,8 @@ class GohmPriceDiscordBot:
 
         self.bot.event(self.on_ready)
         self.update_gohm_price = tasks.loop(minutes=self.updateinterval)(self._update_gohm_price)
-        self.bot.add_command(commands.Command(name='fixpresence', callback=self._fixpresence, pass_context=True))
+        self.bot.add_command(commands.Command(name='fixpresence', func=self._fixpresence, pass_context=True))
+
 
 
     async def on_ready(self):
