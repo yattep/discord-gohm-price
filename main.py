@@ -11,68 +11,14 @@ import constants
 import asyncio
 import gohmpricebot
 import ohmpricebot
+import ohmindexbot
 from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, get_current_day_lb, human_format, get_image_data
 
 gpb = gohmpricebot.GohmPriceDiscordBot("olyprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
 opb = ohmpricebot.OhmPriceDiscordBot("ohmprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
-
-
-###OHM INDEX BOT START###
-index_bot = commands.Bot(command_prefix="olyindex!")
-
-### index bot log in
-@index_bot.event
-async def on_ready():
-    print(f"Logged in as {index_bot.user.name}")
-    print("------")
-    if update_index.is_running():
-      print("Task Already Running on_ready")
-    else:
-      await update_index.start()  # DYNAMIC
-
-@index_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def fixpresence(ctx):
-    for guild in index_bot.guilds:
-        await index_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM Index"))
-    await ctx.send("Yes ser, on it boss.")
-
-@index_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def forceupdate(ctx):
-    await ctx.send("Yes ser, on it boss.")
-    newName = await get_ohm_index()
-    for guild in index_bot.guilds:
-        await guild.me.edit(nick=newName)
-        await index_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM Index"))
-    await ctx.send("Happy to report it has been updated!")
-
-@tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
-async def update_index():
-    try:
-        newName = await get_ohm_index()
-        print(f"Updating index bot nickname to: {newName}")
-        ## dynamic updates
-        for guild in index_bot.guilds:
-            await guild.me.edit(nick=newName)
-            await index_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"OHM Index"))
-    except:
-        for guild in index_bot.guilds:
-            await index_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"OHM Index"))
-
-async def get_ohm_index():
-    rawindex = get_raw_index()
-    
-    name_val = round(float(rawindex),4)
-  
-    return str(name_val)
-###OHM INDEX BOT END###
+oib = ohmindexbot.OhmIndexDiscordBot("olyindex!",constants.ADMIN_ROLE, constants.GENERIC_UPDATE_INTERVAL)
 
 ###OHM LB SMA BOT START###
 lb_sma_bot = commands.Bot(command_prefix="ohmliq!")
@@ -526,7 +472,7 @@ async def on_message(message):
 #run
 loop = asyncio.get_event_loop()
 
-loop.create_task(index_bot.start(os.environ['INDEX_BOT_TOKEN']))
+loop.create_task(oib.bot.start(os.environ['INDEX_BOT_TOKEN']))
 
 loop.create_task(gpb.bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
 
