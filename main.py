@@ -9,71 +9,10 @@ from pycoingecko import CoinGeckoAPI
 import traceback
 import constants
 import asyncio
+import gohmpricebot
 from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, get_current_day_lb, human_format, get_image_data
 
-###GOHM PRICE BOT START###
-olyprice_bot = commands.Bot(command_prefix="olyprice!")
-
-cg = CoinGeckoAPI()
-LAST_PRICE = -1
-
-### log in
-@olyprice_bot.event
-async def on_ready():
-    print(f"Logged in as {olyprice_bot.user.name}")
-    print("------")
-    if update_gohm_price.is_running():
-        print("Task Already Running on_ready")
-    else:
-      await update_gohm_price.start()  # DYNAMIC
-
-@olyprice_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def fixpresence(ctx):
-    for guild in olyprice_bot.guilds:
-        await olyprice_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"gOHM price"))
-    await ctx.send("Yes ser, on it boss.")
-
-# update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
-@tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
-async def update_gohm_price():
-    try:   
-        newName = await get_gohm_price()
-        print(f"Updating nickname to: {newName}")
-        ## dynamic updates
-    
-        for guild in olyprice_bot.guilds:
-            await guild.me.edit(nick=newName)
-            await olyprice_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"gOHM price"))
-    except:
-        for guild in olyprice_bot.guilds:
-            await olyprice_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"gOHM price"))
-        print("likely discord rate limit")
-        traceback.print_exc()
-
-async def get_gohm_price():
-    global LAST_PRICE
-
-    raw_data = cg.get_price(ids='governance-ohm', vs_currencies='usd, eth')
-    market_data = json.dumps(raw_data)
-    json_data = json.loads(market_data)
-    
-    usdPrice = get_price_gohm() #fetches from latest subgraph block
-    ethPrice = json_data["governance-ohm"]["eth"] #fetches from CG, not available in subgraph
-  
-    if LAST_PRICE != -1 and (abs(((usdPrice - LAST_PRICE) / usdPrice) * 100) > 10):
-        print(f"Caught Price Exception, reverting to last price", {usdPrice} | {LAST_PRICE})
-        return "{} | Ξ{}".format(human_format(LAST_PRICE),"%.2f" % round(ethPrice, 2))
-    else:
-        #print("else")
-        LAST_PRICE = usdPrice
-        name_val = "{} | Ξ{}".format(human_format(usdPrice),"%.2f" % round(ethPrice, 2))
-    
-    return name_val
-###GOHM PRICE BOT END###
+gpb = gohmpricebot.GohmPriceDiscordBot("olyprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
 ###OHM PRICE BOT START###
 ohmprice_bot = commands.Bot(command_prefix="ohmprice!")
@@ -659,7 +598,7 @@ loop = asyncio.get_event_loop()
 
 loop.create_task(index_bot.start(os.environ['INDEX_BOT_TOKEN']))
 
-loop.create_task(olyprice_bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
+loop.create_task(gpb.bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
 
 loop.create_task(ohmprice_bot.start(os.environ['OHM_BOT_TOKEN']))
 
