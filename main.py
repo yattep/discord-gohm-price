@@ -10,84 +10,14 @@ import traceback
 import constants
 import asyncio
 import gohmpricebot
+import ohmpricebot
 from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, get_current_day_lb, human_format, get_image_data
 
 gpb = gohmpricebot.GohmPriceDiscordBot("olyprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
-###OHM PRICE BOT START###
-ohmprice_bot = commands.Bot(command_prefix="ohmprice!")
-
-cg = CoinGeckoAPI()
-LAST_OHM_PRICE = -1
-
-### log in
-@ohmprice_bot.event
-async def on_ready():
-    print(f"Logged in as {ohmprice_bot.user.name}")
-    print("------")
-    if update_ohm_price.is_running():
-        print("Task Already Running on_ready")
-    else:
-      await update_ohm_price.start()  # DYNAMIC
-
-@ohmprice_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def fixpresence(ctx):
-    for guild in ohmprice_bot.guilds:
-        await ohmprice_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM Price"))
-    await ctx.send("Yes ser, on it boss.")
-
-@ohmprice_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def forceupdate(ctx):
-    await ctx.send("Yes ser, on it boss.")
-    newName = await get_ohm_price()
-    for guild in ohmprice_bot.guilds:
-        await guild.me.edit(nick=newName)
-        await ohmprice_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM Price"))
-    await ctx.send("Happy to report it has been updated!")
+opb = ohmpricebot.OhmPriceDiscordBot("ohmprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
 
-# update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
-@tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
-async def update_ohm_price():
-    try:   
-        newName = await get_ohm_price()
-        print(f"Updating nickname to: {newName}")
-        ## dynamic updates
-    
-        for guild in ohmprice_bot.guilds:
-            await guild.me.edit(nick=newName)
-            await ohmprice_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"OHM price"))
-    except:
-        for guild in ohmprice_bot.guilds:
-            await ohmprice_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"OHM price"))
-        print("likely discord rate limit")
-        traceback.print_exc()
-
-async def get_ohm_price():
-    global LAST_OHM_PRICE
-    raw_data = cg.get_price(ids='olympus', vs_currencies='usd, eth')
-    market_data = json.dumps(raw_data)
-    json_data = json.loads(market_data)
-    #print(json_data)
-    usdPrice = get_price_ohm()
-    ethPrice = json_data["olympus"]["eth"]
-  
-    if LAST_OHM_PRICE != -1 and (abs(((usdPrice - LAST_OHM_PRICE) / usdPrice) * 100) > 10):
-        print(f"Caught Price Exception, reverting to last price", {usdPrice} | {LAST_OHM_PRICE})
-        return "{} | Ξ{}".format(human_format(LAST_OHM_PRICE),"%.3f" % round(ethPrice, 3))
-    else:
-        #print("else")
-        LAST_OHM_PRICE = usdPrice
-        name_val = "{} | Ξ{}".format(human_format(usdPrice),"%.3f" % round(ethPrice, 3))
-    
-    return name_val
-###OHM PRICE BOT END###
 
 ###OHM INDEX BOT START###
 index_bot = commands.Bot(command_prefix="olyindex!")
@@ -600,7 +530,7 @@ loop.create_task(index_bot.start(os.environ['INDEX_BOT_TOKEN']))
 
 loop.create_task(gpb.bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
 
-loop.create_task(ohmprice_bot.start(os.environ['OHM_BOT_TOKEN']))
+loop.create_task(opb.bot.start(os.environ['OHM_BOT_TOKEN']))
 
 loop.create_task(mcap_bot.start(os.environ['MCAP_BOT_TOKEN']))
 
