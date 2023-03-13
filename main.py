@@ -96,8 +96,20 @@ async def on_ready():
 async def fixpresence(ctx):
     for guild in ohmprice_bot.guilds:
         await ohmprice_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM price"))
+            type=discord.ActivityType.watching, name=f"OHM Price"))
     await ctx.send("Yes ser, on it boss.")
+
+@ohmprice_bot.command(pass_context=True)
+@commands.has_role(constants.ADMIN_ROLE)
+async def forceupdate(ctx):
+    await ctx.send("Yes ser, on it boss.")
+    newName = await get_ohm_price()
+    for guild in ohmprice_bot.guilds:
+        await guild.me.edit(nick=newName)
+        await ohmprice_bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"OHM Price"))
+    await ctx.send("Happy to report it has been updated!")
+
 
 # update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
 @tasks.loop(minutes=constants.PRICE_UPDATE_INTERVAL)
