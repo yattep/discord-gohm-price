@@ -28,6 +28,9 @@ class OhmLiquidBackingDiscordBot:
             self.update_lb.start()
 
     async def _forceupdate(self, ctx):
+        if not self.role_check(ctx.author.roles):
+            await ctx.send("You don't have permission to use this command.")
+            return
         await ctx.send("Yes ser, on it boss.")
         newName = await self.get_ohm_lb()
         for guild in self.bot.guilds:

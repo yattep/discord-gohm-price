@@ -3,17 +3,14 @@ import os
 import time
 import discord
 from discord.ext import commands
-from discord.ext import tasks
-import json
-from pycoingecko import CoinGeckoAPI
-import traceback
 import constants
 import asyncio
 import gohmpricebot
 import ohmpricebot
 import ohmindexbot
 import ohmlbbot
-from helpers import get_circulating_supply, get_price_ohm, get_price_gohm, get_raw_index, get_7d_lb_sma, get_7d_floating_supply, get_7d_agg_token_values, get_7d_lb_sma_raw, get_current_day_lb, human_format, get_image_data
+import ohmmcapbot
+from helpers import get_image_data
 
 gpb = gohmpricebot.GohmPriceDiscordBot("olyprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
@@ -23,66 +20,7 @@ oib = ohmindexbot.OhmIndexDiscordBot("olyindex!",constants.ADMIN_ROLE, constants
 
 olbb = ohmlbbot.OhmLiquidBackingDiscordBot("ohmliq!",constants.ADMIN_ROLE, constants.LB_UPDATE_INTERVAL)
 
-###OHM MCAP BOT START###
-mcap_bot = commands.Bot(command_prefix="olymcap!")
-LAST_VAL = ''
-### log in
-@mcap_bot.event
-async def on_ready():
-    print(f"Logged in as {mcap_bot.user.name}")
-    print("------")
-    if update_mcap.is_running():
-      print("Task Already Running on_ready")
-    else:
-      await update_mcap.start()  # DYNAMIC
-
-@mcap_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def fixpresence(ctx):
-    for guild in mcap_bot.guilds:
-        await mcap_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM MCAP"))
-    await ctx.send("Yes ser, on it boss.")
-
-@mcap_bot.command(pass_context=True)
-@commands.has_role(constants.ADMIN_ROLE)
-async def forceupdate(ctx):
-    await ctx.send("Yes ser, on it boss.")
-    newName = get_ohm_mcap()
-    for guild in mcap_bot.guilds:
-        await guild.me.edit(nick=newName)
-        await mcap_bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching, name=f"OHM MCAP"))
-    await ctx.send("Happy to report it has been updated!")
-
-# update nickname/precense on UPDATE_INTERVAL - # DYNAMIC
-@tasks.loop(minutes=constants.GENERIC_UPDATE_INTERVAL)
-async def update_mcap():
-    try:
-        newName = await get_ohm_mcap()
-        print(f"Updating nickname to: {newName}")
-        ## dynamic updates
-        for guild in mcap_bot.guilds:
-            await guild.me.edit(nick=newName)
-            await mcap_bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"OHM MCAP"))
-    except:
-        print("likely discord rate limit")
-
-async def get_ohm_mcap():
-    global LAST_VAL
-    try:
-      price = get_price_ohm()
-      circ_supply = get_circulating_supply()
-      mcap = price * circ_supply
-      name_val = human_format(float(mcap))
-      LAST_VAL = name_val
-      return name_val
-    except:
-      traceback.print_exc()
-      print("subgraph exception")
-      return LAST_VAL
-###OHM MCAP BOT END###
+omcb = ohmmcapbot.OhmMarketCapDiscordBot("olymcap!",constants.ADMIN_ROLE, constants.GENERIC_UPDATE_INTERVAL)
 
 ###SENTINEL BOT START###
 ### intents
@@ -369,7 +307,7 @@ loop.create_task(gpb.bot.start(os.environ['GOHM_PRICE_BOT_TOKEN']))
 
 loop.create_task(opb.bot.start(os.environ['OHM_BOT_TOKEN']))
 
-loop.create_task(mcap_bot.start(os.environ['MCAP_BOT_TOKEN']))
+loop.create_task(omcb.bot.start(os.environ['MCAP_BOT_TOKEN']))
 
 loop.create_task(sentinel_bot.start(os.environ['SENTINEL_BOT_TOKEN']))
 
