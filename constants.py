@@ -14,6 +14,7 @@ def get_token_supply_7d_query():
 PRICE_UPDATE_INTERVAL = 20 # in minutes
 GENERIC_UPDATE_INTERVAL = 10 # in minutes
 LB_UPDATE_INTERVAL = 720 # in minutes
+INDEX_UPDATE_INTERVAL = 360 # in minutes
 SUBGRAPH_URL = 'https://gateway.thegraph.com/api/[api-key]/subgraphs/id/DTcDcUSBRJjz9NeoK5VbXCVzYbRTyuBwdPUqMi8x32pY'
 ARBI_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/protocol-metrics-arbitrum'
 POLY_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olympusdao/protocol-metrics-polygon'

@@ -13,11 +13,11 @@ gpb = gohmpricebot.GohmPriceDiscordBot("olyprice!",constants.ADMIN_ROLE, constan
 
 opb = ohmpricebot.OhmPriceDiscordBot("ohmprice!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
-oib = ohmindexbot.OhmIndexDiscordBot("olyindex!",constants.ADMIN_ROLE, constants.GENERIC_UPDATE_INTERVAL)
+oib = ohmindexbot.OhmIndexDiscordBot("olyindex!",constants.ADMIN_ROLE, constants.INDEX_UPDATE_INTERVAL)
 
 olbb = ohmlbbot.OhmLiquidBackingDiscordBot("ohmliq!",constants.ADMIN_ROLE, constants.LB_UPDATE_INTERVAL)
 
-omcb = ohmmcapbot.OhmMarketCapDiscordBot("olymcap!",constants.ADMIN_ROLE, constants.GENERIC_UPDATE_INTERVAL)
+omcb = ohmmcapbot.OhmMarketCapDiscordBot("olymcap!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
 sentinel = sentinelbot.SentinelDiscordBot("oly!",constants.ADMIN_ROLE)
 
