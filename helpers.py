@@ -13,7 +13,7 @@ def get_data(url, queryFormat, construct = False):
         query = queryFormat
     ## TODO: will need to update this logic if other endpoints have diff keys
     if "[api-key]" in url:
-        url = url.replace('[api-key]', os.environ('SUBGRAPH_API_KEY'))
+        url = url.replace('[api-key]', os.environ['SUBGRAPH_API_KEY'])
     raw = requests.post(url, json = query)
     raw_json = json.loads(raw.text)
     return raw_json
