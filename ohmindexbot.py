@@ -60,7 +60,7 @@ class OhmIndexDiscordBot:
                 await self.bot.change_presence(activity=discord.Activity(
                     type=discord.ActivityType.watching, name=f"OHM Index"))
 
-    async def get_ohm_index():
+    async def get_ohm_index(self):
         rawindex = get_raw_index()
         
         name_val = round(float(rawindex),4)
