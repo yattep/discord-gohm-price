@@ -28,16 +28,20 @@ class OhmLiquidBackingDiscordBot:
             self.update_lb.start()
 
     async def _forceupdate(self, ctx):
-        if not self.role_check(ctx.author.roles):
-            await ctx.send("You don't have permission to use this command.")
-            return
-        await ctx.send("Yes ser, on it boss.")
-        newName = await self.get_ohm_lb()
-        for guild in self.bot.guilds:
-            await guild.me.edit(nick=newName)
-            await self.bot.change_presence(activity=discord.Activity(
-                type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
-        await ctx.send("Happy to report it has been updated!")
+        try:
+            if not self.role_check(ctx.author.roles):
+                await ctx.send("You don't have permission to use this command.")
+                return
+            await ctx.send("Yes ser, on it boss.")
+            newName = await self.get_ohm_lb()
+            for guild in self.bot.guilds:
+                await guild.me.edit(nick=newName)
+                await self.bot.change_presence(activity=discord.Activity(
+                    type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
+            await ctx.send("Happy to report it has been updated!")
+        except:
+            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            traceback.print_exc()
 
     async def _fixpresence(self, ctx):
         if not self.role_check(ctx.author.roles):
@@ -63,19 +67,24 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name=k, value="{:,}".format(v), inline=False)
             await ctx.send(embed=embed)
         except:
+            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _ping(self, ctx):
-        lb_today = get_current_day_lb()
-        _, removed, upper, lower = get_7d_lb_sma()
-        embed = discord.Embed(title="Pong", color=discord.Color.blue())
-        embed.add_field(name="Current LB", value=f"${lb_today:,.2f}", inline=False)
-        embed.add_field(name="Upper Bound", value=f"${upper:,.2f}", inline=False)
-        embed.add_field(name="Lower Bound", value=f"${lower:,.2f}", inline=False)
-        if removed:
-            excluded_values = "\n".join([f"{k}: ${v:,.2f}" for k, v in removed.items()])
-            embed.add_field(name="Excluded Value(s)", value=excluded_values, inline=False)
-        await ctx.send(embed=embed)
+        try:
+            lb_today = get_current_day_lb()
+            _, removed, upper, lower = get_7d_lb_sma()
+            embed = discord.Embed(title="Pong", color=discord.Color.blue())
+            embed.add_field(name="Current LB", value=f"${lb_today:,.2f}", inline=False)
+            embed.add_field(name="Upper Bound", value=f"${upper:,.2f}", inline=False)
+            embed.add_field(name="Lower Bound", value=f"${lower:,.2f}", inline=False)
+            if removed:
+                excluded_values = "\n".join([f"{k}: ${v:,.2f}" for k, v in removed.items()])
+                embed.add_field(name="Excluded Value(s)", value=excluded_values, inline=False)
+            await ctx.send(embed=embed)
+        except:
+            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            traceback.print_exc()
 
     async def _getrawtokens(self, ctx):
         try:
@@ -86,6 +95,7 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
             await ctx.send(embed=embed)
         except:
+            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _getrunninglb(self, ctx):
@@ -97,6 +107,7 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
             await ctx.send(embed=embed)
         except:
+            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _update_lb(self):
