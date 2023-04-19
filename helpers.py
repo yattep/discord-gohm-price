@@ -128,7 +128,7 @@ def get_floating_supply():
     tokens = data['data']['tokenSupplies']
     tokens = list(filter(lambda x: x['type'] != "OHM Bonds (Vesting Tokens)", tokens))
     
-    return sum(float(tkn['supplyBalance']) for tkn in tokens)
+    return sum(float(tkn['supplyBalance']) for tkn in tokens) - 1_674_646 ##TODO: UNDO THIS HACK AFTER SUBGRAPH DEPLOYMENT
 
 def get_raw_index():
     data = get_data(constants.SUBGRAPH_URL, constants.INDEX_PRICE_QUERY, True)
