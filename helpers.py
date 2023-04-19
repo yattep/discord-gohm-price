@@ -194,6 +194,8 @@ def get_current_day_lb():
 
 ### TEMP HACK FOR OVERSUPPLY
 
+from datetime import datetime
+
 def get_7d_floating_supply():
     data = get_data(constants.SUBGRAPH_URL, constants.get_token_supply_7d_query())
     data = get_records_with_highest_block(data, constants.DataType.TOKEN_SUPPLIES)
@@ -207,12 +209,11 @@ def get_7d_floating_supply():
         if token_supply['type'] != "OHM Bonds (Vesting Tokens)":
             supply_balance = float(token_supply['supplyBalance'])
             date = token_supply['date']
-
-            # Check if the current date is today, and if so, subtract 1,674,646 from the supply_balance
-            if date == today:
-                supply_balance -= 1_674_646
-
             aggregated_data[date] = aggregated_data.get(date, 0) + supply_balance
+
+    # Check if today's date is in the aggregated_data dictionary, and if so, subtract 1,674,646 from the value
+    if today in aggregated_data:
+        aggregated_data[today] -= 1_674_646
 
     return aggregated_data
 
