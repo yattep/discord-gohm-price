@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 from helpers import human_format, get_7d_floating_supply, get_current_day_lb, get_7d_lb_sma, get_7d_agg_token_values, get_7d_lb_sma_raw
+import constants
 import traceback
 
 class OhmLiquidBackingDiscordBot:
@@ -127,7 +128,13 @@ class OhmLiquidBackingDiscordBot:
                 
     async def get_ohm_lb(self):
         try:
-            lb_val, _, _, _ = get_7d_lb_sma()
+            lb_val, removed, _, _ = get_7d_lb_sma()
+
+            if removed:
+                channel = self.bot.get_channel(constants.LOG_CHANNEL)
+                removed_string = "|".join([f"{k}: ${v:,.2f}" for k, v in removed])
+                await channel.send(
+                    f"<@&924860610775253043> Detected anomalous price in 7-day liquid backing, please check ohmliq!getrunninglb, ohmliq!getrawtokens, ohmliq!getrawfloating to determine outlier. Removed price(s):, {removed_string}")
         
             return human_format(lb_val)
         except:
