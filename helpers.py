@@ -4,6 +4,7 @@ import json
 import io
 import numpy as np
 import os
+from datetime import datetime
 ## HELPERS
 
 def get_data(url, queryFormat, construct = False):
@@ -171,25 +172,50 @@ def get_current_day_lb():
 
     return combined_token_vals / floating_supply
 
-def get_7d_floating_supply():
-    data = get_data(constants.SUBGRAPH_URL,constants.get_token_supply_7d_query())
-  # get data from highest block per day
-    data = get_records_with_highest_block(data, constants.DataType.TOKEN_SUPPLIES)
-  # create a dictionary to store the sum of supplyBalance values for each date
-    aggregated_data = {}
+# def get_7d_floating_supply():
+#     data = get_data(constants.SUBGRAPH_URL,constants.get_token_supply_7d_query())
+#   # get data from highest block per day
+#     data = get_records_with_highest_block(data, constants.DataType.TOKEN_SUPPLIES)
+#   # create a dictionary to store the sum of supplyBalance values for each date
+#     aggregated_data = {}
     
-    # loop through the tokenSupplies array
+#     # loop through the tokenSupplies array
+#     for token_supply in data:
+#         # check if the type is not "OHM Bonds (Vesting Tokens)"
+#         if token_supply['type'] != "OHM Bonds (Vesting Tokens)":
+#             # convert the supplyBalance string to a float
+#             supply_balance = float(token_supply['supplyBalance'])
+#             date = token_supply['date']
+#             # add the supplyBalance value to the aggregated data for the date
+#             aggregated_data[date] = aggregated_data.get(date, 0) + supply_balance
+
+#   # return the sum of supplyBalance values for each date
+#     return aggregated_data
+
+### TEMP HACK FOR OVERSUPPLY
+
+def get_7d_floating_supply():
+    data = get_data(constants.SUBGRAPH_URL, constants.get_token_supply_7d_query())
+    data = get_records_with_highest_block(data, constants.DataType.TOKEN_SUPPLIES)
+
+    aggregated_data = {}
+
+    # Get today's date in YYYY-MM-DD format
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
     for token_supply in data:
-        # check if the type is not "OHM Bonds (Vesting Tokens)"
         if token_supply['type'] != "OHM Bonds (Vesting Tokens)":
-            # convert the supplyBalance string to a float
             supply_balance = float(token_supply['supplyBalance'])
             date = token_supply['date']
-            # add the supplyBalance value to the aggregated data for the date
+
+            # Check if the current date is today, and if so, subtract 1,674,646 from the supply_balance
+            if date == today:
+                supply_balance -= 1_674_646
+
             aggregated_data[date] = aggregated_data.get(date, 0) + supply_balance
 
-  # return the sum of supplyBalance values for each date
     return aggregated_data
+
 
 def get_7d_eth_token_values():
     data = get_data(constants.SUBGRAPH_URL,constants.get_token_record_7d_query())
