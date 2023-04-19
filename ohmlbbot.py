@@ -79,7 +79,7 @@ class OhmLiquidBackingDiscordBot:
             embed.add_field(name="Upper Bound", value=f"${upper:,.2f}", inline=False)
             embed.add_field(name="Lower Bound", value=f"${lower:,.2f}", inline=False)
             if removed:
-                excluded_values = "\n".join([f"{k}: ${v:,.2f}" for k, v in removed.items()])
+                excluded_values = "\n".join([f"{k}: ${v:,.2f}" for k, v in removed])
                 embed.add_field(name="Excluded Value(s)", value=excluded_values, inline=False)
             await ctx.send(embed=embed)
         except:
