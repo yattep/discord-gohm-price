@@ -40,7 +40,7 @@ class OhmLiquidBackingDiscordBot:
                     type=discord.ActivityType.watching, name=f"OHM LB 7D SMA"))
             await ctx.send("Happy to report it has been updated!")
         except:
-            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            await ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _fixpresence(self, ctx):
@@ -67,7 +67,7 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name=k, value="{:,}".format(v), inline=False)
             await ctx.send(embed=embed)
         except:
-            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            await ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _ping(self, ctx):
@@ -83,7 +83,7 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name="Excluded Value(s)", value=excluded_values, inline=False)
             await ctx.send(embed=embed)
         except:
-            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            await ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _getrawtokens(self, ctx):
@@ -95,7 +95,7 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
             await ctx.send(embed=embed)
         except:
-            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            await ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _getrunninglb(self, ctx):
@@ -107,7 +107,7 @@ class OhmLiquidBackingDiscordBot:
                 embed.add_field(name=k, value=f"${v:,.2f}", inline=False)
             await ctx.send(embed=embed)
         except:
-            ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
+            await ctx.send("Exception Raised, check https://status.thegraph.com/ for any outages")
             traceback.print_exc()
 
     async def _update_lb(self):
