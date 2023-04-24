@@ -166,17 +166,17 @@ class SentinelDiscordBot:
 
         await ctx.message.add_reaction('🧠')  # lets user know command is processing
 
-        # keyword list
-        keywords = ['mod', 'help desk', 'support', 'dev', 'dr00', 'yattep']
-
         for guild in self.bot.guilds:
             found_members = []
             for member in guild.members:
-                for keyword in keywords:
+                if member.id in constants.EXCLUDE_IDS:
+                    continue
+                for keyword in constants.SCAMMER_KEYWORDS:
                     if keyword in member.name or (member.nick and keyword in member.nick):
                         print(f'Found member {member.name} ({member.id}) with keyword {keyword}')
                         found_members.append(member)
             if not found_members:
+                keywords = "\n".join(constants.SCAMMER_KEYWORDS)
                 response = f'No members found with keywords: {keywords}'
             else:
                 response = 'Found members:\n'
