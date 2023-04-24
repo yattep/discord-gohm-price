@@ -6,8 +6,9 @@ import constants
 from helpers import get_image_data
 
 class SentinelDiscordBot:
-    def __init__(self, commandprefix, adminrole):
+    def __init__(self, commandprefix, adminrole, optionalrole = None):
         self.adminrole = adminrole
+        self.optionalrole = optionalrole
         self.streak_threshold = 3
         self.streak_message = None
         self.streak_count = 0
@@ -25,9 +26,13 @@ class SentinelDiscordBot:
         self.bot.add_command(commands.Command(name='masskick', func=self._masskick, pass_context=True))
         self.bot.add_command(commands.Command(name='listzero', func=self._listzero, pass_context=True))
         self.bot.add_command(commands.Command(name='bulkrole', func=self._bulkrole, pass_context=True))
+        self.bot.add_command(commands.Command(name='sususers', func=self._sususers, pass_context=True))
 
-    async def role_check(self, user_roles):
+    async def role_check(self, user_roles, allow_optional = False):
         for role in user_roles:
+            if self.optionalrole and allow_optional:
+                if role.name == self.optionalrole:
+                    return True
             if role.name == self.adminrole:
                 return True
         return False
@@ -153,6 +158,33 @@ class SentinelDiscordBot:
         await ctx.message.add_reaction('✅')  # add finished reaction
     
         await ctx.send("Added {} to {} users".format(role,count))
+
+    async def _sususers(self, ctx, role: discord.Role):
+        if not self.role_check(ctx.author.roles, True):
+            await ctx.send("You don't have permission to use this command.")
+            return
+
+        await ctx.message.add_reaction('🧠')  # lets user know command is processing
+
+        # keyword list
+        keywords = ['mod', 'help desk', 'support', 'dev', 'dr00', 'yattep']
+
+        for guild in self.bot.guilds:
+            found_members = []
+            for member in guild.members:
+                for keyword in keywords:
+                    if keyword in member.name or (member.nick and keyword in member.nick):
+                        print(f'Found member {member.name} ({member.id}) with keyword {keyword}')
+                        found_members.append(member)
+            if not found_members:
+                response = f'No members found with keywords: {keywords}'
+            else:
+                response = 'Found members:\n'
+                for member in found_members:
+                    response += f'{member} (ID: {member.id})\n'
+            
+            await ctx.send(response)
+
 
     async def add_reactions(self, message, count=None):
         try:

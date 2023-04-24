@@ -27,6 +27,7 @@ TOKEN_RECORD_7D_QUERY = get_token_record_7d_query()
 INDEX_PRICE_QUERY = "{{protocolMetrics(first: 1, where: {{block: \"{}\"}}) {{ currentIndex ohmPrice gOhmPrice }}}}"
 STREAK_MESSAGE_SEQUENCE = ['earth', 'fire', 'wind', 'water', 'heart', 'go planet']
 ADMIN_ROLE = "Scholars"
+INTERN_ROLE = "Intern"
 GRASSHOPPER = "Grasshoppers"
 DATE_FORMAT = '%m/%d %-I:%M%p'
 LOG_CHANNEL = 825084057700139049

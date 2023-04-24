@@ -19,7 +19,7 @@ olbb = ohmlbbot.OhmLiquidBackingDiscordBot("ohmliq!",constants.ADMIN_ROLE, const
 
 omcb = ohmmcapbot.OhmMarketCapDiscordBot("olymcap!",constants.ADMIN_ROLE, constants.PRICE_UPDATE_INTERVAL)
 
-sentinel = sentinelbot.SentinelDiscordBot("oly!",constants.ADMIN_ROLE)
+sentinel = sentinelbot.SentinelDiscordBot("oly!",constants.ADMIN_ROLE, constants.INTERN_ROLE)
 
 #run
 loop = asyncio.get_event_loop()
