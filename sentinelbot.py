@@ -234,7 +234,7 @@ class SentinelDiscordBot:
         if message.author == self.bot.user:
             return
         
-        if message.content.startswith('oly!'):
+        if message.content.lower().startswith('oly!'):
             await self.bot.process_commands(message)
 
         # Check if the message was sent in the desired channel
