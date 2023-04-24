@@ -235,7 +235,7 @@ class SentinelDiscordBot:
             return
         
         if message.content.startswith('oly!'):
-            self.bot.process_commands(message)
+            await self.bot.process_commands(message)
 
         # Check if the message was sent in the desired channel
         desired_channel_id = 798371943324844042  # Replace with the ID of the desired channel
